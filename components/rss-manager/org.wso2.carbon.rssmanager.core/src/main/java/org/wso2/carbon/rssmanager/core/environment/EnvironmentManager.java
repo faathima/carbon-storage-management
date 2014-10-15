@@ -30,6 +30,7 @@ import org.wso2.carbon.rssmanager.core.dto.common.DatabasePrivilegeSet;
 import org.wso2.carbon.rssmanager.core.dto.common.DatabasePrivilegeTemplate;
 import org.wso2.carbon.rssmanager.core.dto.common.DatabasePrivilegeTemplateEntry;
 import org.wso2.carbon.rssmanager.core.dto.restricted.RSSInstance;
+import org.wso2.carbon.rssmanager.core.dto.restricted.Workflow;
 import org.wso2.carbon.rssmanager.core.environment.dao.*;
 import org.wso2.carbon.rssmanager.core.exception.RSSManagerException;
 import org.wso2.carbon.rssmanager.core.internal.RSSManagerDataHolder;
@@ -675,5 +676,68 @@ public class EnvironmentManager {
 	public String[] getEnvironmentNames() {
 		return environmentNames;
 	}
+
+    /////////////
+    public void createWorkflow(String environmentName, Workflow workflow) throws RSSManagerException {
+        boolean inTx = false;
+        try {
+            if (workflow == null) {
+                String msg = "Workflow information cannot be null";
+                log.error(msg);
+                throw new RSSManagerException(msg);
+            }
+            final int tenantId = RSSManagerUtil.getTenantId();
+           /* boolean isExist = this.getEnvironmentDAOMgr()
+                    .getDatabasePrivilegeTemplateDAO()
+                    .isDatabasePrivilegeTemplateExist(environmentName, template.getName(),
+                            tenantId);
+            if (isExist) {
+                String msg = "A database privilege template named '" + template.getName() + "' already exists";
+                log.error(msg);
+                throw new RSSManagerException(msg);
+            }*/
+
+            EnvironmentDAO envDao = this.getEnvironmentDAOMgr().getEnvironmentDAO();
+            Environment env = validateEnvironment(environmentName, envDao);
+            //closeJPASession();
+
+            inTx = getEntityManager().beginTransaction();
+            // joinTransaction();
+            // workflow.s(env);
+            workflow.setTenantId(tenantId);
+            // Workflow entry = new Workflow();
+            // DatabasePrivilegeTemplateEntry entry = new DatabasePrivilegeTemplateEntry();
+            //RSSManagerUtil.createDatabasePrivilegeTemplateEntry(template.getPrivileges(), entry);
+            //template.setEntry(entry);
+            //entry.setPrivilegeTemplate(template);
+            //workflow.setTenantId(tenantId);
+
+            // template.setEntry(null);
+            System.out.println(workflow);
+            this.getEnvironmentDAOMgr().getWorkflowDAO().insert(workflow);
+            // entry.setPrivilegeTemplate(template);
+            // this.getEnvironmentDAOMgr().getDatabasePrivilegeTemplateEntryDAO().insert(entry);
+
+            if (inTx) {
+                this.getEntityManager().endJPATransaction();
+            }
+        } catch (Exception e) {
+            if (inTx) {
+                getEntityManager().rollbackJPATransaction();
+            }
+            String msg = "Error occurred while adding metadata related to " + "workflow for database : '" + workflow.getDatabaseName() + "', to RSS metadata " + "repository : " + e.getMessage();
+            handleException(msg, e);
+        } finally {
+            closeJPASession();
+			/*
+			 * if (inTx) {
+			 * getEntityManager().endJPATransaction();
+			 * }
+			 */
+
+        }
+
+
+    }
 
 }

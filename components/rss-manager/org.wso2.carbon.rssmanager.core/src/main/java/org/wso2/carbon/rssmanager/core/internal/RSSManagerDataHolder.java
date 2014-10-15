@@ -26,6 +26,7 @@ import org.wso2.carbon.securevault.SecretCallbackHandlerService;
 import org.wso2.carbon.user.api.UserStoreException;
 import org.wso2.carbon.user.core.service.RealmService;
 import org.wso2.carbon.user.core.tenant.TenantManager;
+import org.wso2.carbon.utils.ConfigurationContextService;
 import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 
 import javax.transaction.TransactionManager;
@@ -41,6 +42,21 @@ public class RSSManagerDataHolder {
     private SecretCallbackHandlerService secretCallbackHandlerService;
 
     private TenantManager tenantManager;
+
+
+    ////
+
+    private static ConfigurationContextService contextService;
+
+    public static ConfigurationContextService getContextService() {
+        return contextService;
+    }
+
+    public static void setContextService(ConfigurationContextService contextService) {
+        RSSManagerDataHolder.contextService = contextService;
+    }
+
+    /////////////////
 
     private static RSSManagerDataHolder thisInstance = new RSSManagerDataHolder();
 

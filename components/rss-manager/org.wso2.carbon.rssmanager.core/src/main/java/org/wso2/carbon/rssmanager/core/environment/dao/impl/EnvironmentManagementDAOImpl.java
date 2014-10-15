@@ -19,6 +19,9 @@
 
 package org.wso2.carbon.rssmanager.core.environment.dao.impl;
 
+
+import org.wso2.carbon.rssmanager.core.dao.WorkflowDAO;
+import org.wso2.carbon.rssmanager.core.dao.impl.WorkflowDAOImpl;
 import org.wso2.carbon.rssmanager.core.dao.util.EntityManager;
 import org.wso2.carbon.rssmanager.core.environment.DatabasePrivilegeTemplateEntryDAO;
 import org.wso2.carbon.rssmanager.core.environment.dao.DatabasePrivilegeTemplateDAO;
@@ -53,6 +56,10 @@ public class EnvironmentManagementDAOImpl implements EnvironmentManagementDAO {
     @Override
     public DatabasePrivilegeTemplateEntryDAO getDatabasePrivilegeTemplateEntryDAO() {
         return new MySQLPrivilegeTemplateEntryDAOImpl(this.getEntityManager());  
+    }
+    @Override
+    public WorkflowDAO getWorkflowDAO(){
+        return new WorkflowDAOImpl(this.getEntityManager());
     }
 
     private EntityManager getEntityManager() {

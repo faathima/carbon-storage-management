@@ -36,6 +36,7 @@ import org.wso2.carbon.rssmanager.core.dto.common.*;
 import org.wso2.carbon.rssmanager.core.dto.restricted.Database;
 import org.wso2.carbon.rssmanager.core.dto.restricted.DatabaseUser;
 import org.wso2.carbon.rssmanager.core.dto.restricted.RSSInstance;
+import org.wso2.carbon.rssmanager.core.dto.restricted.Workflow;
 import org.wso2.carbon.rssmanager.core.exception.RSSManagerException;
 import org.wso2.carbon.rssmanager.core.internal.RSSManagerDataHolder;
 import org.wso2.carbon.user.api.UserStoreException;
@@ -458,6 +459,22 @@ public final class RSSManagerUtil {
         info.setUrl(createDatabaseUrl(entity.getName(),entity.getRssInstance().getDbmsType(),entity.getRssInstance().getServerURL()));
 
     }
+
+
+    ////////////////////////////////
+    public static void createWorkflowInfo(WorkflowInfo info, Workflow entity){
+        if(info == null || entity == null){
+            return;
+        }
+        info.setDatabaseName(entity.getDatabaseName());
+        info.setDbSInstanceName(entity.getRssInstance());
+        info.setTenantId(entity.getTenantId());
+        //     info.setCallbackURL(entity.getCallbackURL());
+        info.setWorkflowExternalReference(entity.getWorkflowExternalReference());
+        info.setStatus(entity.getStatus());
+        info.setCreatedTime(entity.getCreatedTime());
+
+    }
     
     public static void createDatabaseUserInfo(DatabaseUserInfo info , DatabaseUser entity){
     	if(info == null || entity == null){
@@ -562,7 +579,28 @@ public final class RSSManagerUtil {
     	entity.setUrl(info.getUrl());
 
     }
-    
+
+    /////////////////////////////
+    public static void createWorkflow(Database info, Workflow entity){
+        if (info == null || entity == null){
+            return;
+        }
+        entity.setDatabaseName(info.getName());
+        entity.setRssInstance(info.getRssInstanceName());
+        //entity.setTenantId(info.getTenantId());
+        entity.setType(info.getType());
+
+        //      entity.setCreatedTime(System.currentTimeMillis());
+        entity.setStatus("create");
+        //       entity.setCallbackURL("");
+        //    entity.setWorkflowExternalReference("");
+
+
+
+
+    }
+
+
     public static void createDatabaseUser(DatabaseUserInfo info , DatabaseUser entity){
     	if(info == null || entity == null){
     		return;

@@ -19,6 +19,8 @@
 
 package org.wso2.carbon.rssmanager.core.environment.dao;
 
+
+import org.wso2.carbon.rssmanager.core.dao.WorkflowDAO;
 import org.wso2.carbon.rssmanager.core.environment.DatabasePrivilegeTemplateEntryDAO;
 
 public interface EnvironmentManagementDAO {
@@ -30,5 +32,7 @@ public interface EnvironmentManagementDAO {
     DatabasePrivilegeTemplateDAO getDatabasePrivilegeTemplateDAO();
 
     DatabasePrivilegeTemplateEntryDAO getDatabasePrivilegeTemplateEntryDAO();
+
+    WorkflowDAO getWorkflowDAO();
 
 }

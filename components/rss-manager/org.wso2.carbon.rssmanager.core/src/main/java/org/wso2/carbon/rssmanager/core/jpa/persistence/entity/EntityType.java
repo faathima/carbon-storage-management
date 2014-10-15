@@ -3,6 +3,7 @@ package org.wso2.carbon.rssmanager.core.jpa.persistence.entity;
 import org.wso2.carbon.rssmanager.core.dao.impl.DatabaseDAOImpl;
 import org.wso2.carbon.rssmanager.core.dao.impl.DatabaseUserDAOImpl;
 import org.wso2.carbon.rssmanager.core.dao.impl.UserDatabaseEntryDAOImpl;
+import org.wso2.carbon.rssmanager.core.dao.impl.WorkflowDAOImpl;
 import org.wso2.carbon.rssmanager.core.dao.util.EntityManager;
 import org.wso2.carbon.rssmanager.core.environment.dao.impl.DatabasePrivilegeTemplateDAOImpl;
 import org.wso2.carbon.rssmanager.core.environment.dao.impl.EnvironmentDAOImpl;
@@ -15,7 +16,7 @@ import org.wso2.carbon.rssmanager.core.jpa.persistence.dao.AbstractEntityDAO;
 public enum EntityType {
 	
 	AbstractEntity("AbstractEntity"),DatabaseUser("DatabaseUser"),RSSInstance("RSSInstance"),Environment("Environment"), DatabasePrivilegeTemplate("DatabasePrivilegeTemplate"),
-	UserDatabaseEntry("UserDatabaseEntry"),Database("Database"),UserDatabasePrivilege("UserDatabasePrivilege"),DatabasePrivilegeTemplateEntry("DatabasePrivilegeTemplateEntry"),DatabasePrivilegeSet("DatabasePrivilegeSet");
+	UserDatabaseEntry("UserDatabaseEntry"),Database("Database"),UserDatabasePrivilege("UserDatabasePrivilege"),DatabasePrivilegeTemplateEntry("DatabasePrivilegeTemplateEntry"),DatabasePrivilegeSet("DatabasePrivilegeSet"),Workflow("Workflow");
 	
 	private final String entityType;
 	
@@ -49,6 +50,8 @@ public enum EntityType {
 		case DatabasePrivilegeTemplate:
 			dao = new DatabasePrivilegeTemplateDAOImpl(entityManager);
 			break;
+        case Workflow:
+            dao =new WorkflowDAOImpl(entityManager);
 	
 		}
 		return dao;
