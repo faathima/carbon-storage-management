@@ -467,12 +467,12 @@ public final class RSSManagerUtil {
             return;
         }
         info.setDatabaseName(entity.getDatabaseName());
-        info.setDbSInstanceName(entity.getRssInstance());
-        info.setTenantId(entity.getTenantId());
+     //   info.setDbSInstanceName(entity.getRssInstance());
+      //  info.setTenantId(entity.getTenantId());
         //     info.setCallbackURL(entity.getCallbackURL());
-        info.setWorkflowExternalReference(entity.getWorkflowExternalReference());
-        info.setStatus(entity.getStatus());
-        info.setCreatedTime(entity.getCreatedTime());
+       // info.setWorkflowExternalReference(entity.getWorkflowExternalReference());
+       // info.setStatus(entity.getStatus());
+       // info.setCreatedTime(entity.getCreatedTime());
 
     }
     
@@ -586,12 +586,12 @@ public final class RSSManagerUtil {
             return;
         }
         entity.setDatabaseName(info.getName());
-        entity.setRssInstance(info.getRssInstanceName());
+     //   entity.setRssInstance(info.getRssInstanceName());
         //entity.setTenantId(info.getTenantId());
         entity.setType(info.getType());
 
         //      entity.setCreatedTime(System.currentTimeMillis());
-        entity.setStatus("create");
+       // entity.setStatus("create");
         //       entity.setCallbackURL("");
         //    entity.setWorkflowExternalReference("");
 

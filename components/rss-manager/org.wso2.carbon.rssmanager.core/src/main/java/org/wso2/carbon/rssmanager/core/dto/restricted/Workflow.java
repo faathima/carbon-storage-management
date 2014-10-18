@@ -3,10 +3,25 @@ package org.wso2.carbon.rssmanager.core.dto.restricted;
 import org.wso2.carbon.rssmanager.core.jpa.persistence.entity.AbstractEntity;
 
 import javax.persistence.*;
+import java.util.List;
+import java.util.Set;
 
-/**
- * Created by msffayaza on 10/15/14.
- */
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
+import javax.persistence.Version;
+
+
 @Entity
 @Table(name="RM_WORKFLOW")
 public class Workflow extends AbstractEntity<Integer, Workflow> {
@@ -18,21 +33,19 @@ public class Workflow extends AbstractEntity<Integer, Workflow> {
     @GeneratedValue(strategy=GenerationType.TABLE, generator="WORKFLOW_TABLE_GEN")
     private Integer id;
 
-
+/*
     @Column(name= "WF_CREATED_TIME")
     private long createdTime;
 
     @Column(name="WF_UPDATED_TIME")
-    private long updatedTime;
+    private long updatedTime;*/
 
     @Column(name ="WF_STATUS")
     private String status;
 
     //  @Column(name="CALLBACKURL")
-    //   private String callbackURL;
-
-    @Column(name="WF_EXTERNAL_REFERENCE")
-    private String workflowExternalReference;
+    //   privat
+  //  private String workflowExternalReference;
 
     @Column(name = "TENANT_ID")
     private Integer tenantId;
@@ -42,20 +55,20 @@ public class Workflow extends AbstractEntity<Integer, Workflow> {
     @Transient
     private String databaseName;
 
-    @Transient
-    private String rssInstance;
+  //  @Transient
+   // private String rssInstance;
 
     @Transient
     private String type;
 
-    @Transient
-    private String rssInstanceName;
+//    @Transient
+  //  private String rssInstanceName;
 
     public Workflow(){}
 
     //public Workflow(){}
 
-    public long getCreatedTime() {
+    /*public long getCreatedTime() {
         return createdTime;
     }
 
@@ -87,14 +100,14 @@ public class Workflow extends AbstractEntity<Integer, Workflow> {
         this.callbackURL = callbackURL;
     }*/
 
-    public String getWorkflowExternalReference() {
+  /*  public String getWorkflowExternalReference() {
         return workflowExternalReference;
     }
 
     public void setWorkflowExternalReference(String workflowExternalReference) {
         this.workflowExternalReference = workflowExternalReference;
     }
-
+*/
     public Integer getTenantId() {
         return tenantId;
     }
@@ -112,14 +125,14 @@ public class Workflow extends AbstractEntity<Integer, Workflow> {
         this.databaseName = databaseName;
     }
 
-    public String getRssInstance() {
+    /*public String getRssInstance() {
         return rssInstance;
     }
 
     public void setRssInstance(String rssInstance) {
         this.rssInstance = rssInstance;
     }
-
+*/
     public String getType() {
         return type;
     }
@@ -128,12 +141,11 @@ public class Workflow extends AbstractEntity<Integer, Workflow> {
         this.type = type;
     }
 
-    public String getRssInstanceName() {
+ /*   public String getRssInstanceName() {
         return rssInstanceName;
     }
 
     public void setRssInstanceName(String rssInstanceName) {
         this.rssInstanceName = rssInstanceName;
-    }
+    }*/
 }
-

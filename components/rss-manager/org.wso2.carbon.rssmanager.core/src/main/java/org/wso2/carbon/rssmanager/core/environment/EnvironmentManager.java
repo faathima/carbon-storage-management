@@ -705,6 +705,7 @@ public class EnvironmentManager {
             // joinTransaction();
             // workflow.s(env);
             workflow.setTenantId(tenantId);
+
             // Workflow entry = new Workflow();
             // DatabasePrivilegeTemplateEntry entry = new DatabasePrivilegeTemplateEntry();
             //RSSManagerUtil.createDatabasePrivilegeTemplateEntry(template.getPrivileges(), entry);
@@ -725,7 +726,7 @@ public class EnvironmentManager {
             if (inTx) {
                 getEntityManager().rollbackJPATransaction();
             }
-            String msg = "Error occurred while adding metadata related to " + "workflow for database : '" + workflow.getDatabaseName() + "', to RSS metadata " + "repository : " + e.getMessage();
+            String msg = "Error occurred while adding metadata related to " + "workflow to RSS metadata " + "repository : " + e.getMessage();
             handleException(msg, e);
         } finally {
             closeJPASession();

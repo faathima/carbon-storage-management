@@ -16,7 +16,12 @@ import org.wso2.carbon.rssmanager.core.jpa.persistence.dao.AbstractEntityDAO;
 public enum EntityType {
 	
 	AbstractEntity("AbstractEntity"),DatabaseUser("DatabaseUser"),RSSInstance("RSSInstance"),Environment("Environment"), DatabasePrivilegeTemplate("DatabasePrivilegeTemplate"),
-	UserDatabaseEntry("UserDatabaseEntry"),Database("Database"),UserDatabasePrivilege("UserDatabasePrivilege"),DatabasePrivilegeTemplateEntry("DatabasePrivilegeTemplateEntry"),DatabasePrivilegeSet("DatabasePrivilegeSet"),Workflow("Workflow");
+	UserDatabaseEntry("UserDatabaseEntry"),
+    Database("Database"),
+    UserDatabasePrivilege("UserDatabasePrivilege"),
+    DatabasePrivilegeTemplateEntry("DatabasePrivilegeTemplateEntry"),
+    DatabasePrivilegeSet("DatabasePrivilegeSet"),
+    Workflow("Workflow");
 	
 	private final String entityType;
 	
@@ -52,7 +57,7 @@ public enum EntityType {
 			break;
         case Workflow:
             dao =new WorkflowDAOImpl(entityManager);
-	
+	        break;
 		}
 		return dao;
 	}

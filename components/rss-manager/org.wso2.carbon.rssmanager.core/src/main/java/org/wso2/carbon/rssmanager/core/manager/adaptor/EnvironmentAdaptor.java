@@ -124,13 +124,23 @@ public class EnvironmentAdaptor implements RSSManagerService {
         System.out.println("workflow stuff starting");
         Workflow workflow = new Workflow();
         WorkflowInfo workflowInfo=new WorkflowInfo();
-        RSSManagerUtil.createWorkflow(entity, workflow);
+
+
+      RSSManagerUtil.createWorkflow(entity, workflow);
+        System.out.println("**************testing**********");
+       // System.out.println(workflow.getStatus());
+       // System.out.println(workflowInfo.getCallbackURL());
+       // System.out.println(workflowInfo.getCreatedTime());
+        System.out.println(workflow.getDatabaseName());
+        //System.out.println(workflowInfo.getEnvironment());
+      //  System.out.println(workflowInfo.getDbSInstanceName())
         this.getEnvironmentManager().createWorkflow(environmentName,workflow);
         //RSSManagerUtil.createWorkflow(returnEntity, workflow);
         //workflow.setTenantId(RSSManagerUtil.getTenantId());
 
         //Workflow returnWorkflow = this.getRSSManagerAdaptor(environmentName).addWorkflow(workflow);
-        //RSSManagerUtil.createWorkflowInfo(workflowInfo,workflow);
+        RSSManagerUtil.createWorkflowInfo(workflowInfo,workflow);
+        System.out.println(workflowInfo.getDatabaseName());
         //RSSManagerUtil.createWorkflowInfo(workflowInfo,returnWorkflow);
 
         WorkflowExecutor workflowExecutor =new WorkflowExecutor(){
@@ -195,9 +205,10 @@ public class EnvironmentAdaptor implements RSSManagerService {
                     String payload =
                             "<wor:CreateDBApprovalWorkFlowProcessRequest xmlns:wor=\"http://workflow.createdb.ss.carbon.wso2.org\">\n"
                                     + "        <wor:DatabaseName>$1</wor:DatabaseName>\n"
-                                    + "        <wor:DBSInstanceName>$2</wor:DBSInstanceName>\n"
+
                                     +"</wor:CreateDBApprovalWorkFlowProcessRequest>";
                     /*
+                      //  + "        <wor:DBSInstanceName>$2</wor:DBSInstanceName>\n"
                                     + "        <wor:Environment>$3</wor:Environment>\n"
                                     + "        <wor:description>$4</wor:description>\n"
                                     + "        <wor:workflowExternalRef>$5</wor:workflowExternalRef\n"
@@ -205,7 +216,7 @@ public class EnvironmentAdaptor implements RSSManagerService {
 
 
                     payload = payload.replace("$1", workflowInfo.getDatabaseName());
-                    payload = payload.replace("$2", workflowInfo.getDbSInstanceName());
+                 //   payload = payload.replace("$2", workflowInfo.getDbSInstanceName());
                     /*
                             payload = payload.replace("$4", workflowInfo.getDescription());
                             payload = payload.replace("$5", workflowInfo.getWorkflowExternalReference());

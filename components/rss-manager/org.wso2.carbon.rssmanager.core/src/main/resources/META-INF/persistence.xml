@@ -14,6 +14,7 @@
 		<class>org.wso2.carbon.rssmanager.core.dto.restricted.Database</class>
 		<class>org.wso2.carbon.rssmanager.core.dto.restricted.RSSInstance</class>
 		<class>org.wso2.carbon.rssmanager.core.environment.Environment</class>
+        <class>org.wso2.carbon.rssmanager.core.dto.restricted.Workflow</class>
 
 		<!-- <class>org.jpa.generic.persistence.Merchant</class> -->
 		<!-- <properties>

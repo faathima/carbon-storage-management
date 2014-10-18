@@ -1,7 +1,10 @@
 package org.wso2.carbon.rssmanager.core.workflow;
 
 import org.wso2.carbon.registry.core.utils.UUIDGenerator;
+import org.wso2.carbon.rssmanager.core.dao.impl.WorkflowDAOImpl;
+import org.wso2.carbon.rssmanager.core.dao.util.EntityManager;
 import org.wso2.carbon.rssmanager.core.dto.WorkflowInfo;
+import org.wso2.carbon.rssmanager.core.dto.restricted.Workflow;
 
 import java.io.Serializable;
 
@@ -21,9 +24,12 @@ public abstract class WorkflowExecutor implements Serializable {
 
 
     public void execute(WorkflowInfo workflowInfo) throws Exception{
-        // Workflow workflow= new Workflow();
+
+         //Workflow workflow= new Workflow();
+
         //EntityManager entityManager;
-        //WorkflowDAOImpl workflowDAO = new WorkflowDAOImpl()
+
+      //  WorkflowDAOImpl workflowDAO = new WorkflowDAOImpl(EntityManager entityManager);
         try {
 
 

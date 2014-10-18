@@ -32,6 +32,7 @@ import org.wso2.carbon.securevault.SecretCallbackHandlerService;
 import org.wso2.carbon.transaction.manager.TransactionManagerDummyService;
 import org.wso2.carbon.user.core.service.RealmService;
 import org.wso2.carbon.utils.Axis2ConfigurationContextObserver;
+import org.wso2.carbon.utils.ConfigurationContextService;
 import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 
 import javax.naming.InitialContext;
@@ -65,6 +66,12 @@ import javax.transaction.TransactionManager;
  * policy="dynamic"
  * bind="setSecretCallbackHandlerService"
  * unbind="unsetSecretCallbackHandlerService"
+ * @scr.reference name="configurationContext.service"
+ * interface="org.wso2.carbon.utils.ConfigurationContextService"
+ * cardinality="1..1"
+ * policy="dynamic"
+ * bind="setConfigurationContextService"
+ * unbind="unsetConfigurationContextService"
  */
 public class RSSManagerServiceComponent {
 
@@ -206,5 +213,24 @@ public class RSSManagerServiceComponent {
 		}
 		RSSManagerDataHolder.getInstance().setSecretCallbackHandlerService(null);
 	}
+
+    /**
+     * Set ConfigurationContextService
+     * @param configurationContextService - ConfigurationContextService
+     */
+    protected void setConfigurationContextService(
+            ConfigurationContextService configurationContextService) {
+        RSSManagerDataHolder.setContextService(configurationContextService);
+    }
+
+    /**
+     * Remove ConfigurationContextService
+     * @param configurationContextService -ConfigurationContextService
+     */
+    protected void unsetConfigurationContextService(
+            ConfigurationContextService configurationContextService) {
+        RSSManagerDataHolder.setContextService(null);
+    }
+
 
 }

@@ -14,6 +14,7 @@ public class WorkflowDAOImpl extends AbstractEntityDAO<Integer,Workflow> impleme
     private EntityManager entityManager;
 
     public WorkflowDAOImpl(EntityManager entityManager) {
+
         super(entityManager.getJpaUtil().getJPAEntityManager());
         this.entityManager = entityManager;
     }
@@ -27,10 +28,10 @@ public class WorkflowDAOImpl extends AbstractEntityDAO<Integer,Workflow> impleme
     @Override
     public void addWorkflow(Workflow workflow, int tenantId) throws RSSDAOException{
         //System.out.println(workflow.getCallbackURL());
-        System.out.println(workflow.getStatus());
-        System.out.println(workflow.getCreatedTime());
+     //   System.out.println(workflow.getStatus());
+      //  System.out.println(workflow.getCreatedTime());
         System.out.println(workflow.getTenantId());
-        System.out.println(workflow.getWorkflowExternalReference());
+       // System.out.println(workflow.getWorkflowExternalReference());
 
         workflow.setTenantId(tenantId);
         super.saveOrUpdate(workflow);
