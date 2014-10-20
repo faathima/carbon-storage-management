@@ -37,5 +37,8 @@ public class WorkflowDAOImpl extends AbstractEntityDAO<Integer,Workflow> impleme
         super.saveOrUpdate(workflow);
     }
 
+    private EntityManager getEntityManager() {
+        return entityManager;
+    }
 
 }

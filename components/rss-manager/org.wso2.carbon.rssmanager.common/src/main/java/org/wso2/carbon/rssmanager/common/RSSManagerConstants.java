@@ -28,6 +28,7 @@ public final class RSSManagerConstants {
     public static final String JPA_PERSISTENCE_XML_NAME = "persistence.xml";
     public static final String LOCAL = "LOCAL";
     public static final String RDS = "RDS";
+    public static final String WORKFLOW_CONFIG_XML_NAME = "workflow-extensions.xml";
 
     public static final String JDBC_PREFIX = "jdbc";
 

@@ -71,7 +71,8 @@ public class RSSConfigurationManager {
 		String jpaConfigXMLPatch = CarbonUtils.getCarbonConfigDirPath() +
                 File.separator + "etc" + File.separator + RSSManagerConstants.JPA_PERSISTENCE_XML_NAME;
 		String rssSetupSql= CarbonUtils.getCarbonHome() +  File.separator + "dbscripts" +  File.separator + "rss-manager" + File.separator + "DBTYPE" + File.separator;
-				
+
+
 		try {
 			File rssConfig = new File(rssConfigXMLPath);
 			Document doc = RSSManagerUtil.convertToDocument(rssConfig);

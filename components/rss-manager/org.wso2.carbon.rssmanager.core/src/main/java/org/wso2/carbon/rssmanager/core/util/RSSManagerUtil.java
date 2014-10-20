@@ -466,13 +466,7 @@ public final class RSSManagerUtil {
         if(info == null || entity == null){
             return;
         }
-        info.setDatabaseName(entity.getDatabaseName());
-     //   info.setDbSInstanceName(entity.getRssInstance());
-      //  info.setTenantId(entity.getTenantId());
-        //     info.setCallbackURL(entity.getCallbackURL());
-       // info.setWorkflowExternalReference(entity.getWorkflowExternalReference());
-       // info.setStatus(entity.getStatus());
-       // info.setCreatedTime(entity.getCreatedTime());
+        info.setDatabaseName(entity.getDbName());
 
     }
     
@@ -573,10 +567,12 @@ public final class RSSManagerUtil {
     	if(info == null || entity == null){
     		return;
     	}
+
     	entity.setName(info.getName());
     	entity.setRssInstanceName(info.getRssInstanceName());
     	entity.setType(info.getType());
     	entity.setUrl(info.getUrl());
+        entity.setStatus("created");
 
     }
 
@@ -585,13 +581,24 @@ public final class RSSManagerUtil {
         if (info == null || entity == null){
             return;
         }
-        entity.setDatabaseName(info.getName());
-     //   entity.setRssInstance(info.getRssInstanceName());
-        //entity.setTenantId(info.getTenantId());
+
+        entity.setStatus("created");
+       // entity.setTenantId();
+        entity.setDbName(info.getName());
+        entity.setDatabaseId(info);
+       // entity.setDescribtion();
+        entity.setRssInstance(info.getRssInstanceName());
+       // entity.setEnvironment(info.);
+
+        entity.setStatus("created");
+
+        entity.setDbName(info.getName());
+        entity.setRssInstance(info.getRssInstanceName());
+        entity.setTenantId(info.getTenantId());
         entity.setType(info.getType());
 
-        //      entity.setCreatedTime(System.currentTimeMillis());
-       // entity.setStatus("create");
+        // entity.setCreatedTime(System.currentTimeMillis());
+
         //       entity.setCallbackURL("");
         //    entity.setWorkflowExternalReference("");
 

@@ -1,8 +1,11 @@
 package org.wso2.carbon.rssmanager.core.dto.restricted;
 
+import org.wso2.carbon.rssmanager.core.environment.Environment;
 import org.wso2.carbon.rssmanager.core.jpa.persistence.entity.AbstractEntity;
 
 import javax.persistence.*;
+import java.security.Timestamp;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -21,58 +24,65 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 
-
 @Entity
 @Table(name="RM_WORKFLOW")
 public class Workflow extends AbstractEntity<Integer, Workflow> {
 
     @Id
-    @TableGenerator(name="WORKFLOW_TABLE_GEN", table="SERVER_INSTANCE_SEQUENCE_TABLE", pkColumnName="SEQ_NAME",
-            valueColumnName="SEQ_COUNT", pkColumnValue="EMP_SEQ")
-    @Column(name="WF_ID", columnDefinition="INTEGER")
-    @GeneratedValue(strategy=GenerationType.TABLE, generator="WORKFLOW_TABLE_GEN")
+    @TableGenerator(name = "WORKFLOW_TABLE_GEN", table = "SERVER_INSTANCE_SEQUENCE_TABLE", pkColumnName = "SEQ_NAME",
+            valueColumnName = "SEQ_COUNT", pkColumnValue = "EMP_SEQ")
+    @Column(name = "ID", columnDefinition = "INTEGER")
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "WORKFLOW_TABLE_GEN")
     private Integer id;
 
-/*
-    @Column(name= "WF_CREATED_TIME")
-    private long createdTime;
 
-    @Column(name="WF_UPDATED_TIME")
+    @ManyToOne(cascade = {CascadeType.REFRESH}, fetch = FetchType.EAGER)
+    @JoinColumn(name = "DATABASE_ID", nullable = false)
+    private Database databaseId;
+/*
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "CREATED_TIME")
+    private Timestamp createdTime;
+
+    @Column(name = "UPDATED_TIME")
     private long updatedTime;*/
 
-    @Column(name ="WF_STATUS")
+    @Column(name = "WF_STATUS")
     private String status;
 
-    //  @Column(name="CALLBACKURL")
-    //   privat
-  //  private String workflowExternalReference;
+    @Column(name = "DESCRIBTION")
+    private String describtion;
 
     @Column(name = "TENANT_ID")
     private Integer tenantId;
 
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER)
+    @JoinColumn(name = "ENVIRONMENT_ID", nullable = false)
+    private Environment environment;
 
+    @Column(name = "WF_REFERENCE")
+    private String wfRefference;
 
     @Transient
-    private String databaseName;
-
-  //  @Transient
-   // private String rssInstance;
+    private String rssInstance;
 
     @Transient
     private String type;
 
-//    @Transient
-  //  private String rssInstanceName;
+    @Transient
+    private String rssInstanceName;
 
-    public Workflow(){}
+    @Transient
+    private String dbName;
 
-    //public Workflow(){}
+    public Workflow() {
+    }
 
-    /*public long getCreatedTime() {
+   /* public Timestamp getCreatedTime() {
         return createdTime;
     }
 
-    public void setCreatedTime(long createdTime) {
+    public void setCreatedTime(Timestamp createdTime) {
         this.createdTime = createdTime;
     }
 
@@ -82,32 +92,16 @@ public class Workflow extends AbstractEntity<Integer, Workflow> {
 
     public void setUpdatedTime(long updatedTime) {
         this.updatedTime = updatedTime;
-    }
+    }*/
 
     public String getStatus() {
         return status;
     }
 
     public void setStatus(String status) {
-        status = status;
+        this.status = status;
     }
 
-   /* public String getCallbackURL() {
-        return callbackURL;
-    }*/
-
-    /*public void setCallbackURL(String callbackURL) {
-        this.callbackURL = callbackURL;
-    }*/
-
-  /*  public String getWorkflowExternalReference() {
-        return workflowExternalReference;
-    }
-
-    public void setWorkflowExternalReference(String workflowExternalReference) {
-        this.workflowExternalReference = workflowExternalReference;
-    }
-*/
     public Integer getTenantId() {
         return tenantId;
     }
@@ -116,23 +110,14 @@ public class Workflow extends AbstractEntity<Integer, Workflow> {
         this.tenantId = tenantId;
     }
 
-
-    public String getDatabaseName() {
-        return databaseName;
-    }
-
-    public void setDatabaseName(String databaseName) {
-        this.databaseName = databaseName;
-    }
-
-    /*public String getRssInstance() {
+    public String getRssInstance() {
         return rssInstance;
     }
 
     public void setRssInstance(String rssInstance) {
         this.rssInstance = rssInstance;
     }
-*/
+
     public String getType() {
         return type;
     }
@@ -141,11 +126,59 @@ public class Workflow extends AbstractEntity<Integer, Workflow> {
         this.type = type;
     }
 
- /*   public String getRssInstanceName() {
+    public String getRssInstanceName() {
         return rssInstanceName;
     }
 
     public void setRssInstanceName(String rssInstanceName) {
         this.rssInstanceName = rssInstanceName;
-    }*/
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public String getDescribtion() {
+        return describtion;
+    }
+
+    public void setDescribtion(String describtion) {
+        this.describtion = describtion;
+    }
+
+    public String getWfRefference() {
+        return wfRefference;
+    }
+
+    public void setWfRefference(String wfRefference) {
+        this.wfRefference = wfRefference;
+    }
+
+    public Environment getEnvironment() {
+        return environment;
+    }
+
+    public void setEnvironment(Environment environment) {
+        this.environment = environment;
+    }
+
+    public Database getDatabaseId() {
+        return databaseId;
+    }
+
+    public void setDatabaseId(Database databaseId) {
+        this.databaseId = databaseId;
+    }
+
+    public String getDbName() {
+        return dbName;
+    }
+
+    public void setDbName(String dbName) {
+        this.dbName = dbName;
+    }
 }

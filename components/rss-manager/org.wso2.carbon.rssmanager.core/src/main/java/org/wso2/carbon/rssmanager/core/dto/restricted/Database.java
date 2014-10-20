@@ -64,6 +64,9 @@ public class Database extends AbstractEntity<Integer, Database>{
     
     @Column(name = "TENANT_ID")
     private Integer tenantId;
+
+    @Column(name="STATUS")
+    private String status;
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "database", 
             orphanRemoval = true, fetch=FetchType.EAGER)
@@ -152,4 +155,12 @@ public class Database extends AbstractEntity<Integer, Database>{
 	public void setVersion(Long version) {
 		this.version = version;
 	}
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 }

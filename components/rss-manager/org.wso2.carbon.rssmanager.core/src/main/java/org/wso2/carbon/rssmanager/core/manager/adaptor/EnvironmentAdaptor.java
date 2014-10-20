@@ -42,7 +42,10 @@ import org.wso2.carbon.rssmanager.core.exception.RSSManagerException;
 import org.wso2.carbon.rssmanager.core.internal.RSSManagerDataHolder;
 import org.wso2.carbon.rssmanager.core.service.RSSManagerService;
 import org.wso2.carbon.rssmanager.core.util.RSSManagerUtil;
+import org.wso2.carbon.rssmanager.core.workflow.WorkflowConstants;
+import org.wso2.carbon.rssmanager.core.workflow.WorkflowException;
 import org.wso2.carbon.rssmanager.core.workflow.WorkflowExecutor;
+import org.wso2.carbon.rssmanager.core.workflow.WorkflowExecutorFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -119,145 +122,160 @@ public class EnvironmentAdaptor implements RSSManagerService {
 
         Database entity = new Database();
         RSSManagerUtil.createDatabase(database, entity);
+        Database returnEntity = this.getRSSManagerAdaptor(environmentName).addDatabase(entity);
+        RSSManagerUtil.createDatabaseInfo(database, returnEntity);
 
-        /////////////////////////////
-        System.out.println("workflow stuff starting");
-        Workflow workflow = new Workflow();
-        WorkflowInfo workflowInfo=new WorkflowInfo();
+//        /////////////////////////////
+//        System.out.println("workflow stuff starting");
+//        Workflow workflow = new Workflow();
+//        WorkflowInfo workflowInfo=new WorkflowInfo();
+//        RSSManagerUtil.createWorkflow(entity, workflow);
+//        this.getEnvironmentManager().createWorkflow(environmentName,workflow);
+//        RSSManagerUtil.createWorkflowInfo(workflowInfo,workflow);
+//        System.out.println(workflowInfo.getDatabaseName());
 
+        try {
 
-      RSSManagerUtil.createWorkflow(entity, workflow);
-        System.out.println("**************testing**********");
-       // System.out.println(workflow.getStatus());
-       // System.out.println(workflowInfo.getCallbackURL());
-       // System.out.println(workflowInfo.getCreatedTime());
-        System.out.println(workflow.getDatabaseName());
-        //System.out.println(workflowInfo.getEnvironment());
-      //  System.out.println(workflowInfo.getDbSInstanceName())
-        this.getEnvironmentManager().createWorkflow(environmentName,workflow);
+            System.out.println("workflow stuff starting");
+            Workflow workflow = new Workflow();
+            WorkflowInfo workflowInfo=new WorkflowInfo();
+            RSSManagerUtil.createWorkflow(entity, workflow);
+
+            WorkflowExecutor dbCreationWFExecutor = WorkflowExecutorFactory.getInstance().
+                    getWorkflowExecutor(WorkflowConstants.WF_TYPE_SS_DATABASE_CREATION);
+
+            System.out.println("hey testing"+dbCreationWFExecutor);
+
+            workflow.setWfRefference(dbCreationWFExecutor.generateUUID());
+
+            this.getEnvironmentManager().createWorkflow(environmentName,workflow);
+            RSSManagerUtil.createWorkflowInfo(workflowInfo,workflow);
+            System.out.println(workflowInfo.getDatabaseName());
+
+            dbCreationWFExecutor.execute(workflowInfo);
+            
+        } catch (WorkflowException e) {
+            e.printStackTrace();
+        }
         //RSSManagerUtil.createWorkflow(returnEntity, workflow);
         //workflow.setTenantId(RSSManagerUtil.getTenantId());
 
         //Workflow returnWorkflow = this.getRSSManagerAdaptor(environmentName).addWorkflow(workflow);
-        RSSManagerUtil.createWorkflowInfo(workflowInfo,workflow);
-        System.out.println(workflowInfo.getDatabaseName());
+
         //RSSManagerUtil.createWorkflowInfo(workflowInfo,returnWorkflow);
 
-        WorkflowExecutor workflowExecutor =new WorkflowExecutor(){
-            String serviceEndpoint="http://localhost:9765/services/CreateDBApprovalWorkFlowProcess";
-            String username="admin";
-            String password="admin";
-            String contentType = "application/soap+xml; charset=UTF-8";
-
-
-            @Override
-            public void execute(WorkflowInfo workflowInfo) throws Exception {
-
-                System.out.println("**************testing**********");
-                System.out.println(workflowInfo.getStatus());
-                System.out.println(workflowInfo.getCallbackURL());
-                System.out.println(workflowInfo.getCreatedTime());
-                System.out.println(workflowInfo.getDatabaseName());
-                System.out.println(workflowInfo.getEnvironment());
-                System.out.println(workflowInfo.getDbSInstanceName());
-
-
-                super.execute(workflowInfo);
-
-
-
-                try {
-                    System.out.println("***");
-                    ServiceClient client = new ServiceClient(RSSManagerDataHolder.getContextService().getClientConfigContext(),null);
-
-                    Options options = new Options();
-                    options.setAction("http://workflow.createdb.ss.carbon.wso2.org/initiate");
-                    options.setTo(new EndpointReference(serviceEndpoint));
-
-                    if (contentType != null) {
-                        options.setProperty(Constants.Configuration.MESSAGE_TYPE, contentType);
-                    } else {
-                        options.setProperty(Constants.Configuration.MESSAGE_TYPE,
-                                HTTPConstants.MEDIA_TYPE_APPLICATION_XML);
-                    }
-
-                    HttpTransportProperties.Authenticator auth = new HttpTransportProperties.Authenticator();
-
-                    if (username != null && password != null) {
-                        auth.setUsername(username);
-                        auth.setPassword(password);
-                        auth.setPreemptiveAuthentication(true);
-                        List<String> authSchemes = new ArrayList<String>();
-                        authSchemes.add(HttpTransportProperties.Authenticator.BASIC);
-                        auth.setAuthSchemes(authSchemes);
-                        options.setProperty(org.apache.axis2.transport.http.HTTPConstants.AUTHENTICATE,
-                                auth);
-                        options.setManageSession(true);
-                    }
-
-                    System.out.println( client.getAxisConfiguration().toString());
-                    System.out.println(client.getOptions().toString());
-
-
-
-                    client.setOptions(options);
-
-                    String payload =
-                            "<wor:CreateDBApprovalWorkFlowProcessRequest xmlns:wor=\"http://workflow.createdb.ss.carbon.wso2.org\">\n"
-                                    + "        <wor:DatabaseName>$1</wor:DatabaseName>\n"
-
-                                    +"</wor:CreateDBApprovalWorkFlowProcessRequest>";
-                    /*
-                      //  + "        <wor:DBSInstanceName>$2</wor:DBSInstanceName>\n"
-                                    + "        <wor:Environment>$3</wor:Environment>\n"
-                                    + "        <wor:description>$4</wor:description>\n"
-                                    + "        <wor:workflowExternalRef>$5</wor:workflowExternalRef\n"
-                                    + "        <wor:callBackURL>$6</wor:callBackURL>";*/
-
-
-                    payload = payload.replace("$1", workflowInfo.getDatabaseName());
-                 //   payload = payload.replace("$2", workflowInfo.getDbSInstanceName());
-                    /*
-                            payload = payload.replace("$4", workflowInfo.getDescription());
-                            payload = payload.replace("$5", workflowInfo.getWorkflowExternalReference());
-                            payload = payload.replace("$6", workflowInfo.getCallbackURL());*/
-
-
-
-                    client.fireAndForget(AXIOMUtil.stringToOM(payload));
-
-                    System.out.println("*****");
-                    System.out.println( client.getAxisConfiguration().toString());
-                    System.out.println(client.getOptions().toString());
-
-                } catch (AxisFault axisFault) {
-                    System.out.println("********AxisFault***********");
-                    axisFault.printStackTrace();
-
-                } catch (Exception e) {
-                    System.out.println("********Exception***********");
-                    e.printStackTrace();
-
-                }
-
-
-
-            }
-
-            // @Override
-            // public void complete() throws WorkflowException {
-            //   super.complete();
-            //}
-        };
-
-        try {
-            workflowExecutor.execute(workflowInfo);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        Database returnEntity = this.getRSSManagerAdaptor(environmentName).addDatabase(entity);
-        RSSManagerUtil.createDatabaseInfo(database, returnEntity);
+//        WorkflowExecutor workflowExecutor =new WorkflowExecutor(){
+//            String serviceEndpoint="http://localhost:9765/services/CreateDBApprovalWorkFlowProcess";
+//            String username="admin";
+//            String password="admin";
+//            String contentType = "application/soap+xml; charset=UTF-8";
+//
+//
+//            @Override
+//            public void execute(WorkflowInfo workflowInfo) throws Exception {
+//
+//                System.out.println("**************testing**********");
+//                System.out.println(workflowInfo.getStatus());
+//                System.out.println(workflowInfo.getCallbackURL());
+//                System.out.println(workflowInfo.getCreatedTime());
+//                System.out.println(workflowInfo.getDatabaseName());
+//                System.out.println(workflowInfo.getEnvironment());
+//                System.out.println(workflowInfo.getDbSInstanceName());
+//
+//
+//                super.execute(workflowInfo);
+//
+//
+//
+//                try {
+//                    System.out.println("***");
+//                    ServiceClient client = new ServiceClient(RSSManagerDataHolder.getContextService().getClientConfigContext(),null);
+//
+//                    Options options = new Options();
+//                    options.setAction("http://workflow.createdb.ss.carbon.wso2.org/initiate");
+//                    options.setTo(new EndpointReference(serviceEndpoint));
+//
+//                    if (contentType != null) {
+//                        options.setProperty(Constants.Configuration.MESSAGE_TYPE, contentType);
+//                    } else {
+//                        options.setProperty(Constants.Configuration.MESSAGE_TYPE,
+//                                HTTPConstants.MEDIA_TYPE_APPLICATION_XML);
+//                    }
+//
+//                    HttpTransportProperties.Authenticator auth = new HttpTransportProperties.Authenticator();
+//
+//                    if (username != null && password != null) {
+//                        auth.setUsername(username);
+//                        auth.setPassword(password);
+//                        auth.setPreemptiveAuthentication(true);
+//                        List<String> authSchemes = new ArrayList<String>();
+//                        authSchemes.add(HttpTransportProperties.Authenticator.BASIC);
+//                        auth.setAuthSchemes(authSchemes);
+//                        options.setProperty(org.apache.axis2.transport.http.HTTPConstants.AUTHENTICATE,
+//                                auth);
+//                        options.setManageSession(true);
+//                    }
+//
+//                    System.out.println( client.getAxisConfiguration().toString());
+//                    System.out.println(client.getOptions().toString());
+//
+//
+//
+//                    client.setOptions(options);
+//
+//                    String payload =
+//                            "<wor:CreateDBApprovalWorkFlowProcessRequest xmlns:wor=\"http://workflow.createdb.ss.carbon.wso2.org\">\n"
+//                                    + "        <wor:DatabaseName>$1</wor:DatabaseName>\n"
+//
+//                                    +"</wor:CreateDBApprovalWorkFlowProcessRequest>";
+//                    /*
+//                      //  + "        <wor:DBSInstanceName>$2</wor:DBSInstanceName>\n"
+//                                    + "        <wor:Environment>$3</wor:Environment>\n"
+//                                    + "        <wor:description>$4</wor:description>\n"
+//                                    + "        <wor:workflowExternalRef>$5</wor:workflowExternalRef\n"
+//                                    + "        <wor:callBackURL>$6</wor:callBackURL>";*/
+//
+//
+//                    payload = payload.replace("$1", workflowInfo.getDatabaseName());
+//                 //   payload = payload.replace("$2", workflowInfo.getDbSInstanceName());
+//                    /*
+//                            payload = payload.replace("$4", workflowInfo.getDescription());
+//                            payload = payload.replace("$5", workflowInfo.getWorkflowExternalReference());
+//                            payload = payload.replace("$6", workflowInfo.getCallbackURL());*/
+//
+//
+//
+//                    client.fireAndForget(AXIOMUtil.stringToOM(payload));
+//
+//                    System.out.println("*****");
+//                    System.out.println( client.getAxisConfiguration().toString());
+//                    System.out.println(client.getOptions().toString());
+//
+//                } catch (AxisFault axisFault) {
+//                    System.out.println("********AxisFault***********");
+//                    axisFault.printStackTrace();
+//
+//                } catch (Exception e) {
+//                    System.out.println("********Exception***********");
+//                    e.printStackTrace();
+//
+//                }
+//
+//
+//
+//            }
+//
+//            // @Override
+//            // public void complete() throws WorkflowException {
+//            //   super.complete();
+//            //}
+//        };
+//
+//        try {
+//            workflowExecutor.execute(workflowInfo);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
         return database;
     }
 
