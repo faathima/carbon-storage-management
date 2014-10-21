@@ -124,7 +124,6 @@ public class EnvironmentAdaptor implements RSSManagerService {
         RSSManagerUtil.createDatabase(database, entity);
         Database returnEntity = this.getRSSManagerAdaptor(environmentName).addDatabase(entity);
         RSSManagerUtil.createDatabaseInfo(database, returnEntity);
-
 //        /////////////////////////////
 //        System.out.println("workflow stuff starting");
 //        Workflow workflow = new Workflow();
@@ -133,12 +132,11 @@ public class EnvironmentAdaptor implements RSSManagerService {
 //        this.getEnvironmentManager().createWorkflow(environmentName,workflow);
 //        RSSManagerUtil.createWorkflowInfo(workflowInfo,workflow);
 //        System.out.println(workflowInfo.getDatabaseName());
-
         try {
 
             System.out.println("workflow stuff starting");
             Workflow workflow = new Workflow();
-            WorkflowInfo workflowInfo=new WorkflowInfo();
+           // WorkflowInfo workflowInfo=new WorkflowInfo();
             RSSManagerUtil.createWorkflow(entity, workflow);
 
             WorkflowExecutor dbCreationWFExecutor = WorkflowExecutorFactory.getInstance().
@@ -147,13 +145,14 @@ public class EnvironmentAdaptor implements RSSManagerService {
             System.out.println("hey testing"+dbCreationWFExecutor);
 
             workflow.setWfRefference(dbCreationWFExecutor.generateUUID());
-
+            workflow.setCallbackURL(dbCreationWFExecutor.getCallbackURL());
+            dbCreationWFExecutor.execute(workflow);
             this.getEnvironmentManager().createWorkflow(environmentName,workflow);
-            RSSManagerUtil.createWorkflowInfo(workflowInfo,workflow);
-            System.out.println(workflowInfo.getDatabaseName());
+           // RSSManagerUtil.createWorkflowInfo(workflowInfo,workflow);
+            //System.out.println(workflowInfo.getDatabaseName());
 
-            dbCreationWFExecutor.execute(workflowInfo);
-            
+
+
         } catch (WorkflowException e) {
             e.printStackTrace();
         }

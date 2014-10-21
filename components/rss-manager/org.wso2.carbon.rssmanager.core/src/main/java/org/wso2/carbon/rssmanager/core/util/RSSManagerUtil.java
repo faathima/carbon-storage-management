@@ -462,13 +462,13 @@ public final class RSSManagerUtil {
 
 
     ////////////////////////////////
-    public static void createWorkflowInfo(WorkflowInfo info, Workflow entity){
-        if(info == null || entity == null){
-            return;
-        }
-        info.setDatabaseName(entity.getDbName());
-
-    }
+//    public static void createWorkflowInfo(WorkflowInfo info, Workflow entity){
+//        if(info == null || entity == null){
+//            return;
+//        }
+//        info.setDatabaseName(entity.getDbName());
+//
+//    }
     
     public static void createDatabaseUserInfo(DatabaseUserInfo info , DatabaseUser entity){
     	if(info == null || entity == null){
@@ -582,29 +582,10 @@ public final class RSSManagerUtil {
             return;
         }
 
-        entity.setStatus("created");
-       // entity.setTenantId();
         entity.setDbName(info.getName());
         entity.setDatabaseId(info);
-       // entity.setDescribtion();
         entity.setRssInstance(info.getRssInstanceName());
-       // entity.setEnvironment(info.);
-
-        entity.setStatus("created");
-
-        entity.setDbName(info.getName());
-        entity.setRssInstance(info.getRssInstanceName());
-        entity.setTenantId(info.getTenantId());
         entity.setType(info.getType());
-
-        // entity.setCreatedTime(System.currentTimeMillis());
-
-        //       entity.setCallbackURL("");
-        //    entity.setWorkflowExternalReference("");
-
-
-
-
     }
 
 

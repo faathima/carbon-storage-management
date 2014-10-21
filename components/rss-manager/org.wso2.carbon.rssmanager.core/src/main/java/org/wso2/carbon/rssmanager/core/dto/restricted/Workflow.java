@@ -48,7 +48,7 @@ public class Workflow extends AbstractEntity<Integer, Workflow> {
     private long updatedTime;*/
 
     @Column(name = "WF_STATUS")
-    private String status;
+    private String status ;
 
     @Column(name = "DESCRIBTION")
     private String describtion;
@@ -74,6 +74,10 @@ public class Workflow extends AbstractEntity<Integer, Workflow> {
 
     @Transient
     private String dbName;
+
+    @Transient
+    private String callbackURL;
+
 
     public Workflow() {
     }
@@ -180,5 +184,13 @@ public class Workflow extends AbstractEntity<Integer, Workflow> {
 
     public void setDbName(String dbName) {
         this.dbName = dbName;
+    }
+
+    public String getCallbackURL() {
+        return callbackURL;
+    }
+
+    public void setCallbackURL(String callbackURL) {
+        this.callbackURL = callbackURL;
     }
 }

@@ -10,7 +10,6 @@ import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.HttpTransportProperties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.rssmanager.core.dto.WorkflowInfo;
 import org.wso2.carbon.rssmanager.core.dto.restricted.Workflow;
 import org.wso2.carbon.rssmanager.core.internal.RSSManagerDataHolder;
 
@@ -18,9 +17,6 @@ import javax.xml.stream.XMLStreamException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by msffayaza on 10/18/14.
- */
 public class DatabaseCreationWSWorkflowExecutor extends WorkflowExecutor {
     private String serviceEndpoint;
 
@@ -38,35 +34,18 @@ public class DatabaseCreationWSWorkflowExecutor extends WorkflowExecutor {
     }
 
     @Override
-    public void execute(WorkflowInfo workflowInfo) throws WorkflowException {
-        System.out.print("*********hey tesing ws wf ");
+    public void execute(Workflow workflow) throws WorkflowException {
         if (log.isDebugEnabled()) {
             log.info("Executing Application creation Workflow..");
         }
         // super.execute(workflow);
-
-
-
-            System.out.println("**************testing**********");
-            System.out.println(workflowInfo.getStatus());
-            System.out.println(workflowInfo.getCallbackURL());
-            System.out.println(workflowInfo.getCreatedTime());
-            System.out.println(workflowInfo.getDatabaseName());
-            System.out.println(workflowInfo.getEnvironment());
-            System.out.println(workflowInfo.getDbSInstanceName());
-
+            workflow.setStatus("CREATED");
+            workflow.setDescribtion("WAITING FOR PRIVILEGE USER APPROVAL");
 
             try {
 
-
-              //String serviceEndpoint="http://localhost:9765/services/CreateDBApprovalWorkFlowProcess";
-//            String username="admin";
-//            String password="admin";
            String contentType = "application/soap+xml; charset=UTF-8";
-//
-                System.out.println("***");
                 ServiceClient client = new ServiceClient(RSSManagerDataHolder.getContextService().getClientConfigContext(), null);
-
                 Options options = new Options();
                 options.setAction("http://workflow.createdb.ss.carbon.wso2.org/initiate");
                 options.setTo(new EndpointReference(serviceEndpoint));
@@ -83,7 +62,6 @@ public class DatabaseCreationWSWorkflowExecutor extends WorkflowExecutor {
                 if (username != null && password != null) {
                     auth.setUsername(username);
                     auth.setPassword(password);
-                   // auth.setUsername();
                     auth.setPreemptiveAuthentication(true);
                     List<String> authSchemes = new ArrayList<String>();
                     authSchemes.add(HttpTransportProperties.Authenticator.BASIC);
@@ -92,46 +70,30 @@ public class DatabaseCreationWSWorkflowExecutor extends WorkflowExecutor {
                             auth);
                     options.setManageSession(true);
                 }
-
-                System.out.println(client.getAxisConfiguration().toString());
-                System.out.println(client.getOptions().toString());
-
-
                 client.setOptions(options);
 
                 String payload =
                         "<wor:CreateDBApprovalWorkFlowProcessRequest xmlns:wor=\"http://workflow.createdb.ss.carbon.wso2.org\">\n"
                                 + "        <wor:DatabaseName>$1</wor:DatabaseName>\n"
-
+                                + "        <wor:callBackURL>$2</wor:callBackURL>\n"
+                                + "        <wor:description>$3</wor:description>\n"
+                                + "        <wor:workflowExternalRef>$4</wor:workflowExternalRef>\n"
+                               // + "        <wor:DBSInstanceName>$5</wor:DBSInstanceName>\n"
                                 + "</wor:CreateDBApprovalWorkFlowProcessRequest>";
-                    /*
-                      //  + "        <wor:DBSInstanceName>$2</wor:DBSInstanceName>\n"
-                                    + "        <wor:Environment>$3</wor:Environment>\n"
-                                    + "        <wor:description>$4</wor:description>\n"
-                                    + "        <wor:workflowExternalRef>$5</wor:workflowExternalRef\n"
-                                    + "        <wor:callBackURL>$6</wor:callBackURL>";*/
 
 
-                payload = payload.replace("$1", workflowInfo.getDatabaseName());
-                //   payload = payload.replace("$2", workflowInfo.getDbSInstanceName());
-                    /*
-                            payload = payload.replace("$4", workflowInfo.getDescription());
-                            payload = payload.replace("$5", workflowInfo.getWorkflowExternalReference());
-                            payload = payload.replace("$6", workflowInfo.getCallbackURL());*/
-
+                payload = payload.replace("$1",workflow.getDbName());
+                payload = payload.replace("$2", workflow.getCallbackURL());
+                payload=payload.replace("$3", workflow.getDescribtion());
+                payload=payload.replace("$4", workflow.getWfRefference());
+           //     payload=payload.replace("$5",workflow.getRssInstanceName());
 
                 client.fireAndForget(AXIOMUtil.stringToOM(payload));
 
-                System.out.println("*****");
-                System.out.println(client.getAxisConfiguration().toString());
-                System.out.println(client.getOptions().toString());
-
             } catch (AxisFault axisFault) {
-                System.out.println("********AxisFault***********");
                 axisFault.printStackTrace();
 
             } catch (Exception e) {
-                System.out.println("********Exception***********");
                 e.printStackTrace();
 
             }

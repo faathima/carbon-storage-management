@@ -12,7 +12,7 @@ import java.util.List;
 public class DatabseCreationSimpleWorkflowExecutor  extends WorkflowExecutor {
 
     private static final Log log =
-            LogFactory.getLog(DatabaseCreationWSWorkflowExecutor.class);
+            LogFactory.getLog(DatabseCreationSimpleWorkflowExecutor.class);
 
     @Override
     public String getWorkflowType() {
@@ -25,7 +25,9 @@ public class DatabseCreationSimpleWorkflowExecutor  extends WorkflowExecutor {
         if (log.isDebugEnabled()) {
             log.info("Executing Application creation Workflow..");
         }
-//        workflow.setStatus(WorkflowStatus.APPROVED);
+            workflow.setStatus("APPROVED");
+            workflow.setDescribtion("NO NEED PRIVILEGE USER APPROVAL");
+
 //        complete(workFlowDTO);
 
     }
