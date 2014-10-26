@@ -88,14 +88,16 @@ public class DatabaseDAOImpl extends AbstractEntityDAO<Integer, Database> implem
 	}
 	
 	public Database[] getDatabases(String environmentName, int tenantId, String instanceType) throws RSSDAOException {
+        String status="APPROVED";
 		Query query = this.getEntityManager()
 		                  .getJpaUtil()
 		                  .getJPAEntityManager()
-		                  .createQuery(" SELECT db FROM Database db  join  db.rssInstance si WHERE db.tenantId = :dTenantId AND db.type = :type AND  si.environment.name = :envName");
+		                  .createQuery(" SELECT db FROM Database db join  db.rssInstance si WHERE db.tenantId = :dTenantId AND db.type = :type AND db.status=:status AND  si.environment.name = :envName");
 
 		query.setParameter("envName", environmentName);
 		query.setParameter("dTenantId", tenantId);
 		query.setParameter("type", instanceType);
+        query.setParameter("status",status);
 
 		List<Database> result = query.getResultList();
 		Database[] databases = null;
@@ -143,6 +145,10 @@ public class DatabaseDAOImpl extends AbstractEntityDAO<Integer, Database> implem
 		return resolvedName;
 	}
 
+    public void updateDatabse(Database database) throws RSSDAOException{
+        super.saveOrUpdate(database);
+
+    }
     private EntityManager getEntityManager() {
         return entityManager;
     }

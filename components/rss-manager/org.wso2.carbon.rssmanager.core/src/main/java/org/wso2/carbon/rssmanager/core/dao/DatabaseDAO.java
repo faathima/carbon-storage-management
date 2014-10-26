@@ -82,6 +82,8 @@ public interface DatabaseDAO extends EntityBaseDAO<Integer, Database>{
 
     Database[] getAllDatabases(String environmentName, int tenantId) throws RSSDAOException;
 
+    void updateDatabse(Database database)throws RSSDAOException;
+
     public String resolveRSSInstanceByDatabase(String environmentName,
                                                String databaseName, String type,
                                                int tenantId) throws RSSDAOException;

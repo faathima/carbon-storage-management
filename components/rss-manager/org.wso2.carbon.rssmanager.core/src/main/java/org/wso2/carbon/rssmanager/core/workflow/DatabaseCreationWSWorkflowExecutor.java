@@ -10,6 +10,7 @@ import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.HttpTransportProperties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.rssmanager.core.dto.restricted.Database;
 import org.wso2.carbon.rssmanager.core.dto.restricted.Workflow;
 import org.wso2.carbon.rssmanager.core.internal.RSSManagerDataHolder;
 
@@ -34,7 +35,7 @@ public class DatabaseCreationWSWorkflowExecutor extends WorkflowExecutor {
     }
 
     @Override
-    public void execute(Workflow workflow) throws WorkflowException {
+    public void execute(Workflow workflow , Database database) throws WorkflowException {
         if (log.isDebugEnabled()) {
             log.info("Executing Application creation Workflow..");
         }
@@ -71,22 +72,23 @@ public class DatabaseCreationWSWorkflowExecutor extends WorkflowExecutor {
                     options.setManageSession(true);
                 }
                 client.setOptions(options);
-
-                String payload =
+     String payload =
                         "<wor:CreateDBApprovalWorkFlowProcessRequest xmlns:wor=\"http://workflow.createdb.ss.carbon.wso2.org\">\n"
                                 + "        <wor:DatabaseName>$1</wor:DatabaseName>\n"
-                                + "        <wor:callBackURL>$2</wor:callBackURL>\n"
-                                + "        <wor:description>$3</wor:description>\n"
-                                + "        <wor:workflowExternalRef>$4</wor:workflowExternalRef>\n"
-                               // + "        <wor:DBSInstanceName>$5</wor:DBSInstanceName>\n"
+                                +"         <wor:DBSInstanceName>$2</wor:DBSInstanceName>\n"
+                                +"         <wor:Environment>$3</wor:Environment>\n"
+                                + "        <wor:description>$4</wor:description>\n"
+                                + "        <wor:workflowExternalRef>$5</wor:workflowExternalRef>\n"
+                                + "        <wor:callBackURL>$6</wor:callBackURL>\n"
                                 + "</wor:CreateDBApprovalWorkFlowProcessRequest>";
 
 
                 payload = payload.replace("$1",workflow.getDbName());
-                payload = payload.replace("$2", workflow.getCallbackURL());
-                payload=payload.replace("$3", workflow.getDescribtion());
-                payload=payload.replace("$4", workflow.getWfRefference());
-           //     payload=payload.replace("$5",workflow.getRssInstanceName());
+                payload = payload.replace("$2", workflow.getRssInstanceName());
+                payload=payload.replace("$3", workflow.getEnvironmentName());
+                payload=payload.replace("$4", workflow.getDescribtion());
+                payload=payload.replace("$5",workflow.getWfRefference());
+                payload=payload.replace("$6",workflow.getCallbackURL());
 
                 client.fireAndForget(AXIOMUtil.stringToOM(payload));
 
@@ -102,53 +104,17 @@ public class DatabaseCreationWSWorkflowExecutor extends WorkflowExecutor {
         }
 
 
-//    @Override
-//    public void complete(WorkflowDTO workFlowDTO) throws WorkflowException {
-//        workFlowDTO.setUpdatedTime(System.currentTimeMillis());
-//        ApiMgtDAO dao = new ApiMgtDAO();
-//        try {
-//            if(dao.getApplicationById(Integer.parseInt(workFlowDTO.getWorkflowReference())) != null) {
-//
-//                super.complete(workFlowDTO);
-//                log.info("Application Creation [Complete] Workflow Invoked. Workflow ID : " + workFlowDTO.getExternalWorkflowReference() + "Workflow State : " + workFlowDTO.getStatus());
-//
-//                if (WorkflowStatus.APPROVED.equals(workFlowDTO.getStatus())) {
-//                    String status = null;
-//                    if ("CREATED".equals(workFlowDTO.getStatus().toString())) {
-//                        status = APIConstants.ApplicationStatus.APPLICATION_CREATED;
-//                    } else if ("REJECTED".equals(workFlowDTO.getStatus().toString())) {
-//                        status = APIConstants.ApplicationStatus.APPLICATION_REJECTED;
-//                    } else if ("APPROVED".equals(workFlowDTO.getStatus().toString())) {
-//                        status = APIConstants.ApplicationStatus.APPLICATION_APPROVED;
-//                    }
-//
-//
-//                    try {
-//                        dao.updateApplicationStatus(Integer.parseInt(workFlowDTO.getWorkflowReference()),
-//                                status);
-//                    } catch (APIManagementException e) {
-//                        String msg = "Error occured when updating the status of the Application creation " +
-//                                "process";
-//                        log.error(msg, e);
-//                        throw new WorkflowException(msg, e);
-//                    }
-//                }
-//            }else {
-//                String msg = "Application does not exist";
-//                throw new WorkflowException(msg);
-//            }
-//        } catch (APIManagementException e) {
-//            String msg = "Error occured when retrieving the Application creation with workflow ID :"+workFlowDTO.getWorkflowReference();
-//            log.error(msg, e);
-//            throw new WorkflowException(msg, e);
-//        }
-//    }
+    @Override
+    public void complete(Workflow workflow, Database database) throws WorkflowException {
+        String approved="APPROVED";
 
-//    @Override
-//    public List<Workflow> getWorkflowDetails(String workflowStatus) throws WorkflowException {
-//        // TODO Auto-generated method stub
-//        return null;
-//    }
+    }
+
+    @Override
+    public List<Workflow> getWorkflowDetails(String workflowStatus) throws WorkflowException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
     public String getServiceEndpoint() {
         return serviceEndpoint;

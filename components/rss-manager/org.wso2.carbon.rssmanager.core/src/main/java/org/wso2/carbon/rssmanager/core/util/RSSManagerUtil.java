@@ -584,8 +584,9 @@ public final class RSSManagerUtil {
 
         entity.setDbName(info.getName());
         entity.setDatabaseId(info);
-        entity.setRssInstance(info.getRssInstanceName());
-        entity.setType(info.getType());
+        entity.setRssInstanceName(info.getType());
+
+
     }
 
 

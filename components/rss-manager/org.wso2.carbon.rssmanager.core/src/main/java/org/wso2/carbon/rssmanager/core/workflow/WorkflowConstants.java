@@ -17,5 +17,10 @@ public class WorkflowConstants {
 
     public static final String DATABASE_CREATION = "DatabaseCreation";
 
+    public static final String WORKFLOW_CREATED="CREATED";
+
+    public static final String WORKFLOW_APPROVED="APPROVED";
+
+    public static final String WORKFLOW_REJECT="REJECT";
 
 }

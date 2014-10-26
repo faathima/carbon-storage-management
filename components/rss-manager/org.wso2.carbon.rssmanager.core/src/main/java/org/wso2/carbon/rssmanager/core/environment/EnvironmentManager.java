@@ -670,8 +670,6 @@ public class EnvironmentManager {
 
             System.out.println("createworkflow inside environmentManager"+workflow.getTenantId());
             System.out.println(workflow.getTenantId());
-            System.out.println(workflow.getRssInstance());
-            System.out.println(workflow.getType());
             System.out.println(workflow.getStatus());
 
             this.getEnvironmentDAOMgr().getWorkflowDAO().insert(workflow);

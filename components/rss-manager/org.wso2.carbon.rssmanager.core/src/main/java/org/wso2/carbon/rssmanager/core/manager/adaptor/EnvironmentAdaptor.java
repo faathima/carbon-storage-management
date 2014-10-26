@@ -124,6 +124,18 @@ public class EnvironmentAdaptor implements RSSManagerService {
         RSSManagerUtil.createDatabase(database, entity);
         Database returnEntity = this.getRSSManagerAdaptor(environmentName).addDatabase(entity);
         RSSManagerUtil.createDatabaseInfo(database, returnEntity);
+
+        System.out.println("***********");
+        System.out.println("RssInstanceName"+returnEntity.getRssInstanceName());
+        System.out.println("RssInstance"+returnEntity.getRssInstance());
+        System.out.println("Name"+returnEntity.getName());
+        System.out.println("Status"+returnEntity.getStatus());
+        System.out.println("Type"+returnEntity.getType());
+        System.out.println("Version"+returnEntity.getVersion());
+        System.out.println("Id"+returnEntity.getId());
+        System.out.println("TenantId"+returnEntity.getTenantId());
+        System.out.println("Url"+returnEntity.getUrl());
+        System.out.println("UserDatabaseEntries"+returnEntity.getUserDatabaseEntries());
 //        /////////////////////////////
 //        System.out.println("workflow stuff starting");
 //        Workflow workflow = new Workflow();
@@ -137,16 +149,16 @@ public class EnvironmentAdaptor implements RSSManagerService {
             System.out.println("workflow stuff starting");
             Workflow workflow = new Workflow();
            // WorkflowInfo workflowInfo=new WorkflowInfo();
-            RSSManagerUtil.createWorkflow(entity, workflow);
-
+            RSSManagerUtil.createWorkflow(returnEntity, workflow);
+            workflow.setEnvironmentName(environmentName);
             WorkflowExecutor dbCreationWFExecutor = WorkflowExecutorFactory.getInstance().
                     getWorkflowExecutor(WorkflowConstants.WF_TYPE_SS_DATABASE_CREATION);
 
-            System.out.println("hey testing"+dbCreationWFExecutor);
+            System.out.println("***********hey testing"+dbCreationWFExecutor);
 
             workflow.setWfRefference(dbCreationWFExecutor.generateUUID());
             workflow.setCallbackURL(dbCreationWFExecutor.getCallbackURL());
-            dbCreationWFExecutor.execute(workflow);
+            dbCreationWFExecutor.execute(workflow, returnEntity);
             this.getEnvironmentManager().createWorkflow(environmentName,workflow);
            // RSSManagerUtil.createWorkflowInfo(workflowInfo,workflow);
             //System.out.println(workflowInfo.getDatabaseName());
@@ -573,6 +585,12 @@ public class EnvironmentAdaptor implements RSSManagerService {
         entity = this.getRSSManagerAdaptor(environment).editDatabaseUser(environment,entity);
         RSSManagerUtil.createDatabaseUserInfo(databaseUserInfo, entity);
         return databaseUserInfo;
+    }
+
+
+    //////////////////
+    public void updateDatabse(String environment,Database database){
+
     }
 
     @Override

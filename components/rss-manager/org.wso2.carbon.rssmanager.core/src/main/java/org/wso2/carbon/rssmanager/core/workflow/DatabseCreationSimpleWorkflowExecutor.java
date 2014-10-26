@@ -2,9 +2,24 @@ package org.wso2.carbon.rssmanager.core.workflow;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.rssmanager.core.RSSTransactionManager;
+import org.wso2.carbon.rssmanager.core.config.RSSManagementRepository;
+import org.wso2.carbon.rssmanager.core.dao.RSSDAOFactory;
+import org.wso2.carbon.rssmanager.core.dao.exception.RSSDAOException;
+import org.wso2.carbon.rssmanager.core.dao.impl.DatabaseDAOImpl;
+import org.wso2.carbon.rssmanager.core.dao.util.EntityManager;
+import org.wso2.carbon.rssmanager.core.dto.restricted.Database;
 import org.wso2.carbon.rssmanager.core.dto.restricted.Workflow;
+import org.wso2.carbon.rssmanager.core.environment.dao.EnvironmentManagementDAOFactory;
+import org.wso2.carbon.rssmanager.core.internal.RSSManagerDataHolder;
+import org.wso2.carbon.rssmanager.core.jpa.persistence.internal.JPAManagerUtil;
+import org.wso2.carbon.rssmanager.core.jpa.persistence.internal.PersistenceManager;
 
+import javax.persistence.EntityManagerFactory;
+import javax.sql.DataSource;
 import java.util.List;
+import java.util.Set;
+
 
 /**
  * Created by msffayaza on 10/18/14.
@@ -14,6 +29,8 @@ public class DatabseCreationSimpleWorkflowExecutor  extends WorkflowExecutor {
     private static final Log log =
             LogFactory.getLog(DatabseCreationSimpleWorkflowExecutor.class);
 
+
+
     @Override
     public String getWorkflowType() {
         return WorkflowConstants.WF_TYPE_SS_DATABASE_CREATION;
@@ -21,48 +38,26 @@ public class DatabseCreationSimpleWorkflowExecutor  extends WorkflowExecutor {
 
 
 
-    public void execute(Workflow workflow) throws WorkflowException {
+    public void execute(Workflow workflow, Database database) throws WorkflowException {
         if (log.isDebugEnabled()) {
             log.info("Executing Application creation Workflow..");
         }
             workflow.setStatus("APPROVED");
             workflow.setDescribtion("NO NEED PRIVILEGE USER APPROVAL");
 
-//        complete(workFlowDTO);
+     complete(workflow, database);
 
     }
 
-//
-//    public void complete(WorkflowDTO workFlowDTO) throws WorkflowException {
-//        if (log.isDebugEnabled()) {
-//            log.info("Complete  Application creation Workflow..");
-//        }
-//
-//        String status = null;
-//        if ("CREATED".equals(workFlowDTO.getStatus().toString())) {
-//            status = APIConstants.ApplicationStatus.APPLICATION_CREATED;
-//        } else if ("REJECTED".equals(workFlowDTO.getStatus().toString())) {
-//            status = APIConstants.ApplicationStatus.APPLICATION_REJECTED;
-//        } else if ("APPROVED".equals(workFlowDTO.getStatus().toString())) {
-//            status = APIConstants.ApplicationStatus.APPLICATION_APPROVED;
-//        }
-//
-//        ApiMgtDAO dao = new ApiMgtDAO();
-//
-//        try {
-//            dao.updateApplicationStatus(Integer.parseInt(workFlowDTO.getWorkflowReference()), status);
-//        } catch (APIManagementException e) {
-//            String msg = "Error occured when updating the status of the Application creation process";
-//            log.error(msg, e);
-//            throw new WorkflowException(msg, e);
-//        }
-//    }
-//
-//    @Override
-//    public List<WorkflowDTO> getWorkflowDetails(String workflowStatus) throws WorkflowException {
-//        return null;
-//    }
+    public void complete(Workflow workflow, Database database) throws WorkflowException {
+        super.complete(workflow,database);
+
+
+
+    }
+
+    @Override
+    public List<Workflow> getWorkflowDetails(String workflowStatus) throws WorkflowException {
+        return null;
+    }
 }
-
-
-

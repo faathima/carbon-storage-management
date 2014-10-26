@@ -75,13 +75,13 @@ public class WorkflowExecutorFactory {
      * Create a DTO object related to a given workflow type.
      * @param wfType Type of the workflow.
      */
-    public Workflow createWorkflowDTO(String wfType) {
-        Workflow workflow = null;
-        if(WorkflowConstants.WF_TYPE_SS_DATABASE_CREATION.equals(wfType)){
-
-        }
-
-        workflow.setType(wfType);
-        return workflow;
-    }
+//    public Workflow createWorkflowDTO(String wfType) {
+//        Workflow workflow = null;
+//        if(WorkflowConstants.WF_TYPE_SS_DATABASE_CREATION.equals(wfType)){
+//
+//        }
+//
+//        workflow.setType(wfType);
+//        return workflow;
+//    }
 }

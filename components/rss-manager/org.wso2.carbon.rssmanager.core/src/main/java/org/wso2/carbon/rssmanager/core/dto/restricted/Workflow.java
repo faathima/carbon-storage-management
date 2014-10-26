@@ -35,17 +35,9 @@ public class Workflow extends AbstractEntity<Integer, Workflow> {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "WORKFLOW_TABLE_GEN")
     private Integer id;
 
-
     @ManyToOne(cascade = {CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinColumn(name = "DATABASE_ID", nullable = false)
     private Database databaseId;
-/*
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "CREATED_TIME")
-    private Timestamp createdTime;
-
-    @Column(name = "UPDATED_TIME")
-    private long updatedTime;*/
 
     @Column(name = "WF_STATUS")
     private String status ;
@@ -64,10 +56,7 @@ public class Workflow extends AbstractEntity<Integer, Workflow> {
     private String wfRefference;
 
     @Transient
-    private String rssInstance;
-
-    @Transient
-    private String type;
+    private String environmentName;
 
     @Transient
     private String rssInstanceName;
@@ -78,25 +67,13 @@ public class Workflow extends AbstractEntity<Integer, Workflow> {
     @Transient
     private String callbackURL;
 
+    @Transient
+    private String type;
+
 
     public Workflow() {
     }
 
-   /* public Timestamp getCreatedTime() {
-        return createdTime;
-    }
-
-    public void setCreatedTime(Timestamp createdTime) {
-        this.createdTime = createdTime;
-    }
-
-    public long getUpdatedTime() {
-        return updatedTime;
-    }
-
-    public void setUpdatedTime(long updatedTime) {
-        this.updatedTime = updatedTime;
-    }*/
 
     public String getStatus() {
         return status;
@@ -110,24 +87,16 @@ public class Workflow extends AbstractEntity<Integer, Workflow> {
         return tenantId;
     }
 
+    public String getEnvironmentName() {
+        return environmentName;
+    }
+
+    public void setEnvironmentName(String environmentName) {
+        this.environmentName = environmentName;
+    }
+
     public void setTenantId(Integer tenantId) {
         this.tenantId = tenantId;
-    }
-
-    public String getRssInstance() {
-        return rssInstance;
-    }
-
-    public void setRssInstance(String rssInstance) {
-        this.rssInstance = rssInstance;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     public String getRssInstanceName() {
@@ -192,5 +161,13 @@ public class Workflow extends AbstractEntity<Integer, Workflow> {
 
     public void setCallbackURL(String callbackURL) {
         this.callbackURL = callbackURL;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

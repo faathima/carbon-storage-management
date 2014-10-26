@@ -172,4 +172,6 @@ public class RSSManagerAdaptorImpl implements RSSManagerAdaptor {
         return this.resolveRM(databaseUser.getType()).editDatabaseUser(environmentName, databaseUser);
     }
 
+
+
 }
