@@ -146,8 +146,8 @@ public class DatabaseDAOImpl extends AbstractEntityDAO<Integer, Database> implem
 	}
 
     public void updateDatabse(Database database) throws RSSDAOException{
-        super.saveOrUpdate(database);
-
+        super.merge(database);
+      // super.saveOrUpdate(database);
     }
     private EntityManager getEntityManager() {
         return entityManager;

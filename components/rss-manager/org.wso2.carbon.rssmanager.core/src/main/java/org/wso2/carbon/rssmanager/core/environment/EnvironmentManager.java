@@ -648,7 +648,7 @@ public class EnvironmentManager {
 		}
 	}
 
-    /////////////
+
     public void createWorkflow(String environmentName, Workflow workflow) throws RSSManagerException {
         boolean inTx = false;
         try {
@@ -667,11 +667,6 @@ public class EnvironmentManager {
 
             workflow.setTenantId(tenantId);
             workflow.setEnvironment(env);
-
-            System.out.println("createworkflow inside environmentManager"+workflow.getTenantId());
-            System.out.println(workflow.getTenantId());
-            System.out.println(workflow.getStatus());
-
             this.getEnvironmentDAOMgr().getWorkflowDAO().insert(workflow);
 
             if (inTx) {

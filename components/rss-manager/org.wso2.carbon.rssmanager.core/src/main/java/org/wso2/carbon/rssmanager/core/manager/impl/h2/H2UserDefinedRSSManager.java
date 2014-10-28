@@ -114,7 +114,7 @@ public class H2UserDefinedRSSManager extends UserDefinedRSSManager {
         Connection conn = null;
         PreparedStatement dropDBStmt = null;
 
-        RSSInstance rssInstance = resolveRSSInstanceByDatabase(databaseName,RSSManagerConstants.RSSManagerTypes.RM_TYPE_USER_DEFINED);
+        RSSInstance rssInstance = resolveRSSInstanceByDatabase(databaseName, RSSManagerConstants.RSSManagerTypes.RM_TYPE_USER_DEFINED);
         if (rssInstance == null) {
             String msg = "Unresolvable RSS Instance. Database " + databaseName + " does not exist";
             log.error(msg);
@@ -123,7 +123,7 @@ public class H2UserDefinedRSSManager extends UserDefinedRSSManager {
         try {
             /* Validating database name to avoid any possible SQL injection attack */
             RSSManagerUtil.checkIfParameterSecured(databaseName);
-            super.removeDatabase(isInTx, rssInstance.getName(), databaseName, rssInstance,RSSManagerConstants.RSSManagerTypes.RM_TYPE_USER_DEFINED);
+            super.removeDatabase(isInTx, rssInstance.getName(), databaseName, rssInstance, RSSManagerConstants.RSSManagerTypes.RM_TYPE_USER_DEFINED);
             conn = this.getConnection(rssInstance.getName(), databaseName);
             String dropDB = "DROP ALL OBJECTS DELETE FILES";
             dropDBStmt = conn.prepareStatement(dropDB);
@@ -158,15 +158,15 @@ public class H2UserDefinedRSSManager extends UserDefinedRSSManager {
         RSSManagerUtil.validateDatabaseUserInfo(user);
         String qualifiedUsername = RSSManagerUtil.getFullyQualifiedUsername(user.getName());
         int tenantId = RSSManagerUtil.getTenantId();
-        try{
+        try {
             RSSInstance rssInstance = this.getEnvironmentManagementDAO().getRSSInstanceDAO().getRSSInstance(this.getEnvironmentName(),
-                    user.getRssInstanceName(),tenantId);
-            super.addDatabaseUser(isInTx, user, qualifiedUsername,rssInstance);
+                    user.getRssInstanceName(), tenantId);
+            super.addDatabaseUser(isInTx, user, qualifiedUsername, rssInstance);
         	 /* committing the distributed transaction */
             if (isInTx.get()) {
                 getEntityManager().endJPATransaction();
             }
-        }catch(Exception ex){
+        } catch (Exception ex) {
             if (isInTx.get()) {
                 this.getEntityManager().rollbackJPATransaction();
             }
@@ -186,12 +186,12 @@ public class H2UserDefinedRSSManager extends UserDefinedRSSManager {
                                    String username) throws RSSManagerException {
         AtomicBoolean isInTx = new AtomicBoolean(false);
         try {
-            super.removeDatabaseUser(isInTx, username,RSSManagerConstants.RSSManagerTypes.RM_TYPE_USER_DEFINED);
+            super.removeDatabaseUser(isInTx, username, RSSManagerConstants.RSSManagerTypes.RM_TYPE_USER_DEFINED);
             /* committing the distributed transaction */
             if (isInTx.get()) {
                 getEntityManager().endJPATransaction();
             }
-        }catch(Exception ex){
+        } catch (Exception ex) {
 
             if (isInTx.get()) {
                 this.getEntityManager().rollbackJPATransaction();
@@ -229,22 +229,22 @@ public class H2UserDefinedRSSManager extends UserDefinedRSSManager {
         try {
             super.attachUser(isInTx, entry, privileges, rssInstance);
 
-            conn = this.getConnection(rssInstance.getName(),databaseName);
+            conn = this.getConnection(rssInstance.getName(), databaseName);
             conn.setAutoCommit(true);
             if (privileges == null) {
                 privileges = entry.getPrivileges();
             }
 
-            String createUser = "create user "+username+" password '"+username+"'";
+            String createUser = "create user " + username + " password '" + username + "'";
             createUserStmt = conn.prepareStatement(createUser);
             createUserStmt.execute();
 
 
-            String alterUser = "alter user "+username+" admin true ";
+            String alterUser = "alter user " + username + " admin true ";
             alterUserStmt = conn.prepareStatement(alterUser);
             alterUserStmt.execute();
 
-            String createTable = "CREATE TABLE "+databaseName+"_"+username+" (ID INTEGER NOT NULL AUTO_INCREMENT,  NAME VARCHAR(128) NOT NULL,"+
+            String createTable = "CREATE TABLE " + databaseName + "_" + username + " (ID INTEGER NOT NULL AUTO_INCREMENT,  NAME VARCHAR(128) NOT NULL," +
                     " TENANT_ID INTEGER NOT NULL,  PRIMARY KEY (ID),  UNIQUE (NAME, TENANT_ID))";
             createTableStmt = conn.prepareStatement(createTable);
             createTableStmt.execute();
@@ -298,9 +298,9 @@ public class H2UserDefinedRSSManager extends UserDefinedRSSManager {
 
             RSSInstance rssInstance = super.detachUser(isInTx, entry, RSSManagerConstants.RSSManagerTypes.RM_TYPE_USER_DEFINED);
 
-            conn = this.getConnection(rssInstance.getName(),entry.getDatabaseName());
+            conn = this.getConnection(rssInstance.getName(), entry.getDatabaseName());
             conn.setAutoCommit(true);
-            String sql = "drop user "+entry.getUsername();
+            String sql = "drop user " + entry.getUsername();
             stmt = conn.prepareStatement(sql);
 
             /* Actual database user detachment is committed just before committing the meta info
@@ -309,7 +309,7 @@ public class H2UserDefinedRSSManager extends UserDefinedRSSManager {
           * implicitly */
             stmt.execute();
 
-            String dropTable = "DROP TABLE IF EXISTS "+entry.getDatabaseName()+"_"+entry.getUsername();
+            String dropTable = "DROP TABLE IF EXISTS " + entry.getDatabaseName() + "_" + entry.getUsername();
             dropTableStmt = conn.prepareStatement(dropTable);
             dropTableStmt.execute();
 
@@ -355,7 +355,7 @@ public class H2UserDefinedRSSManager extends UserDefinedRSSManager {
             createPostgresPrivilegeSet(h2Privileges, privileges);
 
             final int tenantId = RSSManagerUtil.getTenantId();
-            String rssInstanceName =  this.getRSSDAO()
+            String rssInstanceName = this.getRSSDAO()
                     .getDatabaseDAO()
                     .resolveRSSInstanceByDatabase(this.getEnvironmentName(),
                             databaseName,
@@ -369,7 +369,7 @@ public class H2UserDefinedRSSManager extends UserDefinedRSSManager {
 
             user.setRssInstanceName(rssInstance.getName());
             UserDatabasePrivilege entity = this.getRSSDAO().getUserPrivilegesDAO()
-                    .getUserDatabasePrivileges(getEnvironmentName(),rssInstanceName, databaseName,user.getUsername(), tenantId);
+                    .getUserDatabasePrivileges(getEnvironmentName(), rssInstanceName, databaseName, user.getUsername(), tenantId);
             RSSManagerUtil.createDatabasePrivilege(privileges, entity);
 
             closeJPASession();
@@ -437,7 +437,7 @@ public class H2UserDefinedRSSManager extends UserDefinedRSSManager {
             return;
         }
         StringBuilder sql = new StringBuilder(
-                "GRANT " + privilegesString + " ON " + databaseName +"_"+username+ " TO " + username);
+                "GRANT " + privilegesString + " ON " + databaseName + "_" + username + " TO " + username);
 
         PreparedStatement stmt = con.prepareStatement(sql.toString());
         stmt.executeUpdate();
@@ -476,15 +476,15 @@ public class H2UserDefinedRSSManager extends UserDefinedRSSManager {
 
     @Override
     public boolean isDatabaseUserExist(String rssInstanceName, String username) throws RSSManagerException {
-        boolean isExist=false;
+        boolean isExist = false;
         try {
-            isExist = super.isDatabaseUserExist(rssInstanceName,username,RSSManagerConstants.RSSManagerTypes.RM_TYPE_USER_DEFINED);
-        }catch(Exception ex){
+            isExist = super.isDatabaseUserExist(rssInstanceName, username, RSSManagerConstants.RSSManagerTypes.RM_TYPE_USER_DEFINED);
+        } catch (Exception ex) {
             if (ex instanceof EntityAlreadyExistsException) {
                 handleException(ex.getMessage(), ex);
             }
             String msg = "Error while check whether user '" + username +
-                    "' on RSS instance : " +rssInstanceName+ "exists"+ ex.getMessage();
+                    "' on RSS instance : " + rssInstanceName + "exists" + ex.getMessage();
             handleException(msg, ex);
         }
         return isExist;
@@ -492,15 +492,15 @@ public class H2UserDefinedRSSManager extends UserDefinedRSSManager {
 
     @Override
     public boolean isDatabaseExist(String rssInstanceName, String databaseName) throws RSSManagerException {
-        boolean isExist=false;
+        boolean isExist = false;
         try {
-            isExist = super.isDatabaseExist(rssInstanceName,databaseName,RSSManagerConstants.RSSManagerTypes.RM_TYPE_USER_DEFINED);
-        }catch(Exception ex){
+            isExist = super.isDatabaseExist(rssInstanceName, databaseName, RSSManagerConstants.RSSManagerTypes.RM_TYPE_USER_DEFINED);
+        } catch (Exception ex) {
             if (ex instanceof EntityAlreadyExistsException) {
                 handleException(ex.getMessage(), ex);
             }
             String msg = "Error while check whether database '" + databaseName +
-                    "' on RSS instance : " +rssInstanceName+ "exists"+ ex.getMessage();
+                    "' on RSS instance : " + rssInstanceName + "exists" + ex.getMessage();
             handleException(msg, ex);
         }
         return isExist;
@@ -511,7 +511,6 @@ public class H2UserDefinedRSSManager extends UserDefinedRSSManager {
             privList.add(privEnum);
         }
     }
-
 
 
     private void revokeAllPrivileges(Connection con, String databaseName, String userName)
@@ -535,5 +534,51 @@ public class H2UserDefinedRSSManager extends UserDefinedRSSManager {
     @Override
     public DatabaseUser editDatabaseUser(String environmentName, DatabaseUser databaseUser) {
         return null;
+    }
+
+    @Override
+    public Database editDatabase(Database database) throws RSSManagerException {
+        Connection conn = null;
+        AtomicBoolean isInTx = new AtomicBoolean(false);
+        PreparedStatement stmt = null;
+
+        final String qualifiedDatabaseName = database.getName();
+        RSSInstance rssInstance = null;
+        try {
+            rssInstance = super.getNextAllocationNode();
+            if (rssInstance == null) {
+                String msg = "RSS instance " + database.getRssInstanceName() + " does not exist";
+                log.error(msg);
+                throw new EntityNotFoundException(msg);
+            }
+
+            /* Validating database name to avoid any possible SQL injection attack */
+            RSSManagerUtil.checkIfParameterSecured(qualifiedDatabaseName);
+            super.updateDatabse(isInTx, database, rssInstance, qualifiedDatabaseName);
+            conn = this.getConnection(rssInstance.getName());
+            if (isInTx.get()) {
+                getEntityManager().endJPATransaction();
+            }
+            /* committing the changes to RSS instance */
+            conn.commit();
+        } catch (Exception e) {
+            if (isInTx.get()) {
+                this.getEntityManager().rollbackJPATransaction();
+            }
+            try {
+                if (conn != null) {
+                    conn.rollback();
+                }
+            } catch (Exception e1) {
+                log.error(e1);
+            }
+            String msg = "Error while updating the database status '" + qualifiedDatabaseName +
+                    "' on RSS instance '" + rssInstance.getName() + "' : " + e.getMessage();
+            handleException(msg, e);
+        } finally {
+            RSSManagerUtil.cleanupResources(null, null, conn);
+            closeJPASession();
+        }
+        return database;
     }
 }

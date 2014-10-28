@@ -125,168 +125,20 @@ public class EnvironmentAdaptor implements RSSManagerService {
         Database returnEntity = this.getRSSManagerAdaptor(environmentName).addDatabase(entity);
         RSSManagerUtil.createDatabaseInfo(database, returnEntity);
 
-        System.out.println("***********");
-        System.out.println("RssInstanceName"+returnEntity.getRssInstanceName());
-        System.out.println("RssInstance"+returnEntity.getRssInstance());
-        System.out.println("Name"+returnEntity.getName());
-        System.out.println("Status"+returnEntity.getStatus());
-        System.out.println("Type"+returnEntity.getType());
-        System.out.println("Version"+returnEntity.getVersion());
-        System.out.println("Id"+returnEntity.getId());
-        System.out.println("TenantId"+returnEntity.getTenantId());
-        System.out.println("Url"+returnEntity.getUrl());
-        System.out.println("UserDatabaseEntries"+returnEntity.getUserDatabaseEntries());
-//        /////////////////////////////
-//        System.out.println("workflow stuff starting");
-//        Workflow workflow = new Workflow();
-//        WorkflowInfo workflowInfo=new WorkflowInfo();
-//        RSSManagerUtil.createWorkflow(entity, workflow);
-//        this.getEnvironmentManager().createWorkflow(environmentName,workflow);
-//        RSSManagerUtil.createWorkflowInfo(workflowInfo,workflow);
-//        System.out.println(workflowInfo.getDatabaseName());
         try {
-
-            System.out.println("workflow stuff starting");
             Workflow workflow = new Workflow();
-           // WorkflowInfo workflowInfo=new WorkflowInfo();
             RSSManagerUtil.createWorkflow(returnEntity, workflow);
             workflow.setEnvironmentName(environmentName);
             WorkflowExecutor dbCreationWFExecutor = WorkflowExecutorFactory.getInstance().
                     getWorkflowExecutor(WorkflowConstants.WF_TYPE_SS_DATABASE_CREATION);
-
-            System.out.println("***********hey testing"+dbCreationWFExecutor);
-
             workflow.setWfRefference(dbCreationWFExecutor.generateUUID());
             workflow.setCallbackURL(dbCreationWFExecutor.getCallbackURL());
             dbCreationWFExecutor.execute(workflow, returnEntity);
             this.getEnvironmentManager().createWorkflow(environmentName,workflow);
-           // RSSManagerUtil.createWorkflowInfo(workflowInfo,workflow);
-            //System.out.println(workflowInfo.getDatabaseName());
-
-
 
         } catch (WorkflowException e) {
             e.printStackTrace();
         }
-        //RSSManagerUtil.createWorkflow(returnEntity, workflow);
-        //workflow.setTenantId(RSSManagerUtil.getTenantId());
-
-        //Workflow returnWorkflow = this.getRSSManagerAdaptor(environmentName).addWorkflow(workflow);
-
-        //RSSManagerUtil.createWorkflowInfo(workflowInfo,returnWorkflow);
-
-//        WorkflowExecutor workflowExecutor =new WorkflowExecutor(){
-//            String serviceEndpoint="http://localhost:9765/services/CreateDBApprovalWorkFlowProcess";
-//            String username="admin";
-//            String password="admin";
-//            String contentType = "application/soap+xml; charset=UTF-8";
-//
-//
-//            @Override
-//            public void execute(WorkflowInfo workflowInfo) throws Exception {
-//
-//                System.out.println("**************testing**********");
-//                System.out.println(workflowInfo.getStatus());
-//                System.out.println(workflowInfo.getCallbackURL());
-//                System.out.println(workflowInfo.getCreatedTime());
-//                System.out.println(workflowInfo.getDatabaseName());
-//                System.out.println(workflowInfo.getEnvironment());
-//                System.out.println(workflowInfo.getDbSInstanceName());
-//
-//
-//                super.execute(workflowInfo);
-//
-//
-//
-//                try {
-//                    System.out.println("***");
-//                    ServiceClient client = new ServiceClient(RSSManagerDataHolder.getContextService().getClientConfigContext(),null);
-//
-//                    Options options = new Options();
-//                    options.setAction("http://workflow.createdb.ss.carbon.wso2.org/initiate");
-//                    options.setTo(new EndpointReference(serviceEndpoint));
-//
-//                    if (contentType != null) {
-//                        options.setProperty(Constants.Configuration.MESSAGE_TYPE, contentType);
-//                    } else {
-//                        options.setProperty(Constants.Configuration.MESSAGE_TYPE,
-//                                HTTPConstants.MEDIA_TYPE_APPLICATION_XML);
-//                    }
-//
-//                    HttpTransportProperties.Authenticator auth = new HttpTransportProperties.Authenticator();
-//
-//                    if (username != null && password != null) {
-//                        auth.setUsername(username);
-//                        auth.setPassword(password);
-//                        auth.setPreemptiveAuthentication(true);
-//                        List<String> authSchemes = new ArrayList<String>();
-//                        authSchemes.add(HttpTransportProperties.Authenticator.BASIC);
-//                        auth.setAuthSchemes(authSchemes);
-//                        options.setProperty(org.apache.axis2.transport.http.HTTPConstants.AUTHENTICATE,
-//                                auth);
-//                        options.setManageSession(true);
-//                    }
-//
-//                    System.out.println( client.getAxisConfiguration().toString());
-//                    System.out.println(client.getOptions().toString());
-//
-//
-//
-//                    client.setOptions(options);
-//
-//                    String payload =
-//                            "<wor:CreateDBApprovalWorkFlowProcessRequest xmlns:wor=\"http://workflow.createdb.ss.carbon.wso2.org\">\n"
-//                                    + "        <wor:DatabaseName>$1</wor:DatabaseName>\n"
-//
-//                                    +"</wor:CreateDBApprovalWorkFlowProcessRequest>";
-//                    /*
-//                      //  + "        <wor:DBSInstanceName>$2</wor:DBSInstanceName>\n"
-//                                    + "        <wor:Environment>$3</wor:Environment>\n"
-//                                    + "        <wor:description>$4</wor:description>\n"
-//                                    + "        <wor:workflowExternalRef>$5</wor:workflowExternalRef\n"
-//                                    + "        <wor:callBackURL>$6</wor:callBackURL>";*/
-//
-//
-//                    payload = payload.replace("$1", workflowInfo.getDatabaseName());
-//                 //   payload = payload.replace("$2", workflowInfo.getDbSInstanceName());
-//                    /*
-//                            payload = payload.replace("$4", workflowInfo.getDescription());
-//                            payload = payload.replace("$5", workflowInfo.getWorkflowExternalReference());
-//                            payload = payload.replace("$6", workflowInfo.getCallbackURL());*/
-//
-//
-//
-//                    client.fireAndForget(AXIOMUtil.stringToOM(payload));
-//
-//                    System.out.println("*****");
-//                    System.out.println( client.getAxisConfiguration().toString());
-//                    System.out.println(client.getOptions().toString());
-//
-//                } catch (AxisFault axisFault) {
-//                    System.out.println("********AxisFault***********");
-//                    axisFault.printStackTrace();
-//
-//                } catch (Exception e) {
-//                    System.out.println("********Exception***********");
-//                    e.printStackTrace();
-//
-//                }
-//
-//
-//
-//            }
-//
-//            // @Override
-//            // public void complete() throws WorkflowException {
-//            //   super.complete();
-//            //}
-//        };
-//
-//        try {
-//            workflowExecutor.execute(workflowInfo);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
         return database;
     }
 
@@ -587,10 +439,12 @@ public class EnvironmentAdaptor implements RSSManagerService {
         return databaseUserInfo;
     }
 
-
-    //////////////////
     public void updateDatabse(String environment,Database database){
-
+        try {
+            this.getRSSManagerAdaptor(environment).editDatabase(database);
+        } catch (RSSManagerException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

@@ -133,7 +133,7 @@ public class SQLServerSystemRSSManager extends SystemRSSManager {
             String sql = "DROP DATABASE " + databaseName;
             stmt = conn.prepareStatement(sql);
 
-            super.removeDatabase(isInTx, rssInstance.getName(), databaseName, rssInstance,RSSManagerConstants.RSSManagerTypes.RM_TYPE_SYSTEM);
+            super.removeDatabase(isInTx, rssInstance.getName(), databaseName, rssInstance, RSSManagerConstants.RSSManagerTypes.RM_TYPE_SYSTEM);
 
             stmt.execute();
 
@@ -164,15 +164,15 @@ public class SQLServerSystemRSSManager extends SystemRSSManager {
         AtomicBoolean isInTx = new AtomicBoolean(false);
         Connection conn = null;
         PreparedStatement stmt = null;
-        Map<String,String> mapUserwithInstance = new HashMap<String,String>();
+        Map<String, String> mapUserwithInstance = new HashMap<String, String>();
             /* Validating user information to avoid any possible SQL injection attacks */
         RSSManagerUtil.validateDatabaseUserInfo(user);
         String qualifiedUsername = RSSManagerUtil.getFullyQualifiedUsername(user.getName());
 
         try {
-            super.addDatabaseUser(isInTx, user, qualifiedUsername,RSSManagerConstants.RSSManagerTypes.RM_TYPE_SYSTEM);
+            super.addDatabaseUser(isInTx, user, qualifiedUsername, RSSManagerConstants.RSSManagerTypes.RM_TYPE_SYSTEM);
             RSSInstance[] rssInstances = getEnvironmentManagementDAO().getRSSInstanceDAO().getSystemRSSInstancesInEnvironment(
-                    MultitenantConstants.SUPER_TENANT_ID,this.getEnvironmentName());
+                    MultitenantConstants.SUPER_TENANT_ID, this.getEnvironmentName());
             for (RSSInstance rssInstance : rssInstances) {
                 try {
                     rssInstance = this.getEnvironment().getRSSInstance(rssInstance.getName());
@@ -182,7 +182,7 @@ public class SQLServerSystemRSSManager extends SystemRSSManager {
                     RSSManagerUtil.checkIfParameterSecured(qualifiedUsername);
                     String sql = "CREATE LOGIN " + qualifiedUsername + " WITH PASSWORD = '" + password + "'";
                     stmt = conn.prepareStatement(sql);
-                    
+
                     stmt.execute();
                     mapUserwithInstance.put(rssInstance.getName(), qualifiedUsername);
                     conn.commit();
@@ -206,8 +206,8 @@ public class SQLServerSystemRSSManager extends SystemRSSManager {
             }
             String msg = "Error occurred while creating the database " +
                     "user '" + qualifiedUsername + "' : " + e.getMessage();
-            
-            if(!mapUserwithInstance.isEmpty()){
+
+            if (!mapUserwithInstance.isEmpty()) {
                 dropAddedUsers(mapUserwithInstance);
             }
             handleException(msg, e);
@@ -224,30 +224,30 @@ public class SQLServerSystemRSSManager extends SystemRSSManager {
         }
         return user;
     }
-    
-	private void dropAddedUsers(Map<String, String> mapUserwithInstance) {
-		Set<Entry<String, String>> entries = mapUserwithInstance.entrySet();
-		for (Entry<String, String> entry : entries) {
-			String userName = entry.getValue();
-			String instanceName = entry.getKey();
-			Connection conn = null;
-			PreparedStatement stmt = null;
-			try {
-				conn = getConnection(instanceName);
-				conn.setAutoCommit(false);
 
-				String sql = "DROP LOGIN " + userName;
-				stmt = conn.prepareStatement(sql);
-				stmt.execute();
-				conn.commit();
-			} catch (Exception ex) {
-				log.error(ex);
-			} finally {
-				RSSManagerUtil.cleanupResources(null, stmt, conn);
-			}
+    private void dropAddedUsers(Map<String, String> mapUserwithInstance) {
+        Set<Entry<String, String>> entries = mapUserwithInstance.entrySet();
+        for (Entry<String, String> entry : entries) {
+            String userName = entry.getValue();
+            String instanceName = entry.getKey();
+            Connection conn = null;
+            PreparedStatement stmt = null;
+            try {
+                conn = getConnection(instanceName);
+                conn.setAutoCommit(false);
 
-		}
-	}
+                String sql = "DROP LOGIN " + userName;
+                stmt = conn.prepareStatement(sql);
+                stmt.execute();
+                conn.commit();
+            } catch (Exception ex) {
+                log.error(ex);
+            } finally {
+                RSSManagerUtil.cleanupResources(null, stmt, conn);
+            }
+
+        }
+    }
 
     public void removeDatabaseUser(String type, String username) throws RSSManagerException {
         Connection conn = null;
@@ -255,7 +255,7 @@ public class SQLServerSystemRSSManager extends SystemRSSManager {
         AtomicBoolean isInTx = new AtomicBoolean(false);
         try {
             super.removeDatabaseUser(isInTx, username, RSSManagerConstants.RSSManagerTypes.RM_TYPE_SYSTEM);
-            for (RSSInstance rssInstance: getEnvironmentManagementDAO().getRSSInstanceDAO().getSystemRSSInstances(MultitenantConstants.SUPER_TENANT_ID)) {
+            for (RSSInstance rssInstance : getEnvironmentManagementDAO().getRSSInstanceDAO().getSystemRSSInstances(MultitenantConstants.SUPER_TENANT_ID)) {
                 try {
                     rssInstance = this.getEnvironment().getRSSInstance(rssInstance.getName());
                     PrivilegedCarbonContext.endTenantFlow();
@@ -646,30 +646,30 @@ public class SQLServerSystemRSSManager extends SystemRSSManager {
     }
 
     public boolean isDatabaseExist(String rssInstanceName, String databaseName) throws RSSManagerException {
-        boolean isExist=false;
+        boolean isExist = false;
         try {
-            isExist = super.isDatabaseExist(rssInstanceName,databaseName,RSSManagerConstants.RSSManagerTypes.RM_TYPE_USER_DEFINED);
-        }catch(Exception ex){
+            isExist = super.isDatabaseExist(rssInstanceName, databaseName, RSSManagerConstants.RSSManagerTypes.RM_TYPE_USER_DEFINED);
+        } catch (Exception ex) {
             if (ex instanceof EntityAlreadyExistsException) {
                 handleException(ex.getMessage(), ex);
             }
             String msg = "Error while check whether database '" + databaseName +
-                    "' on RSS instance : " +rssInstanceName+ "exists"+ ex.getMessage();
+                    "' on RSS instance : " + rssInstanceName + "exists" + ex.getMessage();
             handleException(msg, ex);
         }
         return isExist;
     }
 
     public boolean isDatabaseUserExist(String rssInstanceName, String username) throws RSSManagerException {
-        boolean isExist=false;
+        boolean isExist = false;
         try {
-            isExist = super.isDatabaseUserExist(rssInstanceName,username,RSSManagerConstants.RSSManagerTypes.RM_TYPE_USER_DEFINED);
-        }catch(Exception ex){
+            isExist = super.isDatabaseUserExist(rssInstanceName, username, RSSManagerConstants.RSSManagerTypes.RM_TYPE_USER_DEFINED);
+        } catch (Exception ex) {
             if (ex instanceof EntityAlreadyExistsException) {
                 handleException(ex.getMessage(), ex);
             }
             String msg = "Error while check whether user '" + username +
-                    "' on RSS instance : " +rssInstanceName+ "exists"+ ex.getMessage();
+                    "' on RSS instance : " + rssInstanceName + "exists" + ex.getMessage();
             handleException(msg, ex);
         }
         return isExist;
@@ -678,5 +678,59 @@ public class SQLServerSystemRSSManager extends SystemRSSManager {
     @Override
     public DatabaseUser editDatabaseUser(String environmentName, DatabaseUser databaseUser) {
         return null;
+    }
+
+    @Override
+    public Database editDatabase(Database database) throws RSSManagerException {
+        Connection conn = null;
+        AtomicBoolean isInTx = new AtomicBoolean(false);
+        PreparedStatement stmt = null;
+
+        final String qualifiedDatabaseName = database.getName();
+        RSSInstance rssInstance = null;
+        try {
+            rssInstance = super.getNextAllocationNode();
+            if (rssInstance == null) {
+                String msg = "RSS instance " + database.getRssInstanceName() + " does not exist";
+                log.error(msg);
+                throw new EntityNotFoundException(msg);
+            }
+
+            /* Validating database name to avoid any possible SQL injection attack */
+            RSSManagerUtil.checkIfParameterSecured(qualifiedDatabaseName);
+            super.updateDatabse(isInTx, database, rssInstance, qualifiedDatabaseName);
+            conn = this.getConnection(rssInstance.getName());
+            conn.setAutoCommit(false);
+//            String sql =
+//            stmt = conn.prepareStatement(sql);
+
+//            stmt.execute();
+            if (isInTx.get()) {
+                getEntityManager().endJPATransaction();
+            }
+            conn.commit();
+        } catch (Exception e) {
+            if (isInTx.get()) {
+
+                this.getEntityManager().rollbackJPATransaction();
+
+            }
+            try {
+                conn.rollback();
+            } catch (Exception e1) {
+                log.error(e1);
+            }
+            String msg = "Error while creating the database '" + qualifiedDatabaseName +
+                    "' on RSS instance '" + rssInstance.getName() + "' : " + e.getMessage();
+
+            handleException(msg, e);
+
+        } finally {
+            RSSManagerUtil.cleanupResources(null, stmt, conn);
+            closeJPASession();
+        }
+        return database;
+
+
     }
 }

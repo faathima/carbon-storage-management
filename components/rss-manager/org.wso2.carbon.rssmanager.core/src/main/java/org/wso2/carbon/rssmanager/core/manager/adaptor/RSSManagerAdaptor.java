@@ -68,6 +68,8 @@ public interface RSSManagerAdaptor {
 
     DatabaseUser editDatabaseUser(String environmentName,DatabaseUser databaseUser) throws RSSManagerException;
 
+    Database editDatabase(Database database)throws RSSManagerException;
+
 
 
 }

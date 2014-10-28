@@ -460,16 +460,6 @@ public final class RSSManagerUtil {
 
     }
 
-
-    ////////////////////////////////
-//    public static void createWorkflowInfo(WorkflowInfo info, Workflow entity){
-//        if(info == null || entity == null){
-//            return;
-//        }
-//        info.setDatabaseName(entity.getDbName());
-//
-//    }
-    
     public static void createDatabaseUserInfo(DatabaseUserInfo info , DatabaseUser entity){
     	if(info == null || entity == null){
     		return;
@@ -576,17 +566,13 @@ public final class RSSManagerUtil {
 
     }
 
-    /////////////////////////////
     public static void createWorkflow(Database info, Workflow entity){
         if (info == null || entity == null){
             return;
         }
-
         entity.setDbName(info.getName());
         entity.setDatabaseId(info);
         entity.setRssInstanceName(info.getType());
-
-
     }
 
 

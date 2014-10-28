@@ -99,15 +99,11 @@ public class DatabaseCreationWSWorkflowExecutor extends WorkflowExecutor {
                 e.printStackTrace();
 
             }
-
-
         }
-
-
     @Override
     public void complete(Workflow workflow, Database database) throws WorkflowException {
         String approved="APPROVED";
-
+        super.complete(workflow,database);
     }
 
     @Override

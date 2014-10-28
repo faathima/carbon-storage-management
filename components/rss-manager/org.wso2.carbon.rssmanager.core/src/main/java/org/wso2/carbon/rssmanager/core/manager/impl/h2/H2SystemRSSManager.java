@@ -513,4 +513,50 @@ public class H2SystemRSSManager extends SystemRSSManager {
     public DatabaseUser editDatabaseUser(String environmentName, DatabaseUser databaseUser) {
         return null;
     }
+
+    @Override
+    public Database editDatabase(Database database) throws RSSManagerException {
+        Connection conn = null;
+        AtomicBoolean isInTx = new AtomicBoolean(false);
+        PreparedStatement stmt = null;
+
+        final String qualifiedDatabaseName =database.getName();
+        RSSInstance rssInstance = null;
+        try {
+            rssInstance = super.getNextAllocationNode();
+            if (rssInstance == null) {
+                String msg = "RSS instance " + database.getRssInstanceName() + " does not exist";
+                log.error(msg);
+                throw new EntityNotFoundException(msg);
+            }
+
+            /* Validating database name to avoid any possible SQL injection attack */
+            RSSManagerUtil.checkIfParameterSecured(qualifiedDatabaseName);
+            super.updateDatabse(isInTx, database, rssInstance, qualifiedDatabaseName);
+            conn = this.getConnection(rssInstance.getName());
+            if (isInTx.get()) {
+                getEntityManager().endJPATransaction();
+            }
+            /* committing the changes to RSS instance */
+            conn.commit();
+        } catch (Exception e) {
+            if (isInTx.get()) {
+                this.getEntityManager().rollbackJPATransaction();
+            }
+            try {
+                if(conn!=null) {
+                    conn.rollback();
+                }
+            } catch (Exception e1) {
+                log.error(e1);
+            }
+            String msg = "Error while updating the database database status '" + qualifiedDatabaseName +
+                    "' on RSS instance '" + rssInstance.getName() + "' : " + e.getMessage();
+            handleException(msg, e);
+        } finally {
+            RSSManagerUtil.cleanupResources(null, null, conn);
+            closeJPASession();
+        }
+        return database;
+    }
 }

@@ -42,6 +42,8 @@ public interface RSSManager {
      */
     Database addDatabase(Database database) throws RSSManagerException;
 
+    Database editDatabase(Database database)throws RSSManagerException;
+
     /**
      * Remove database from the system.
      * During the removal of the database, it will perform a distributed transaction which performs remove the

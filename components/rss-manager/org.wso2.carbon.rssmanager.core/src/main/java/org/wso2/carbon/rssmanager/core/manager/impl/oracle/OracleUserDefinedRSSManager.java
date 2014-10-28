@@ -103,4 +103,9 @@ public class OracleUserDefinedRSSManager extends UserDefinedRSSManager {
     public DatabaseUser editDatabaseUser(String environmentName, DatabaseUser databaseUser) {
         return null;
     }
+
+    @Override
+    public Database editDatabase(Database database) throws RSSManagerException{
+        return null;
+    }
 }

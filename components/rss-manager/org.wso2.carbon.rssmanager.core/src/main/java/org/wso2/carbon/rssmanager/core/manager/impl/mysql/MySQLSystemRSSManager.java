@@ -71,7 +71,7 @@ public class MySQLSystemRSSManager extends SystemRSSManager {
             log.error(msg);
             throw new EntityAlreadyExistsException(msg);
         }
-        RSSInstance rssInstance=null;
+        RSSInstance rssInstance = null;
         try {
             rssInstance = super.getNextAllocationNode();
             if (rssInstance == null) {
@@ -139,7 +139,7 @@ public class MySQLSystemRSSManager extends SystemRSSManager {
                     RSSManagerConstants.RSSManagerTypes.RM_TYPE_SYSTEM);
             conn = getConnection(rssInstance.getName());
             conn.setAutoCommit(false);
-            String sql = "DROP DATABASE `" + databaseName+"`";
+            String sql = "DROP DATABASE `" + databaseName + "`";
             stmt = conn.prepareStatement(sql);
             /* Actual database creation is committed just before committing the meta info into RSS
              * management repository. This is done as it is not possible to control CREATE, DROP,
@@ -166,12 +166,13 @@ public class MySQLSystemRSSManager extends SystemRSSManager {
 
     /**
      * The method creates a SQL create user query which is MYSQL compliant
-     * @param qualifiedUsername  The tenant qualified username of the form username[tenant post fix]
-     * @param password The password of the provided user
+     *
+     * @param qualifiedUsername The tenant qualified username of the form username[tenant post fix]
+     * @param password          The password of the provided user
      * @return An SQL create query which is compatible with MYSQL
      */
-    private String createSqlQuery(String qualifiedUsername,String password){
-        String query="CREATE USER '"+qualifiedUsername+"'@'%' IDENTIFIED BY '"+password+"'";
+    private String createSqlQuery(String qualifiedUsername, String password) {
+        String query = "CREATE USER '" + qualifiedUsername + "'@'%' IDENTIFIED BY '" + password + "'";
         return query;
     }
 
@@ -179,21 +180,21 @@ public class MySQLSystemRSSManager extends SystemRSSManager {
         AtomicBoolean isInTx = new AtomicBoolean(false);
         Connection conn = null;
         PreparedStatement stmt = null;
-        Map<String,String> mapUserwithInstance = new HashMap<String,String>();
+        Map<String, String> mapUserwithInstance = new HashMap<String, String>();
             /* Validating user information to avoid any possible SQL injection attacks */
         RSSManagerUtil.validateDatabaseUserInfo(user);
         String qualifiedUsername = RSSManagerUtil.getFullyQualifiedUsername(user.getName());
             /* Validating user information to avoid any possible SQL injection attacks */
-        try{
+        try {
             super.addDatabaseUser(isInTx, user, qualifiedUsername, RSSManagerConstants.RSSManagerTypes.RM_TYPE_SYSTEM);
             //======================native call start
             RSSInstance[] rssInstances = getEnvironmentManagementDAO().getRSSInstanceDAO().getSystemRSSInstancesInEnvironment(
-                    MultitenantConstants.SUPER_TENANT_ID,this.getEnvironmentName());
-            for (RSSInstance rssInstance: rssInstances) {
+                    MultitenantConstants.SUPER_TENANT_ID, this.getEnvironmentName());
+            for (RSSInstance rssInstance : rssInstances) {
                 try {
                     conn = getConnection(rssInstance.getName());
                     conn.setAutoCommit(false);
-                    String sql=createSqlQuery(qualifiedUsername,user.getPassword());
+                    String sql = createSqlQuery(qualifiedUsername, user.getPassword());
                     stmt = conn.prepareStatement(sql);
     						/*
                              * Actual database user creation is committed just
@@ -205,8 +206,8 @@ public class MySQLSystemRSSManager extends SystemRSSManager {
     						 * those operations are committed implicitly
     						 */
                     stmt.execute();
-                    mapUserwithInstance.put(rssInstance.getName(),qualifiedUsername);
-                    conn.commit();                    
+                    mapUserwithInstance.put(rssInstance.getName(), qualifiedUsername);
+                    conn.commit();
                 } finally {
                     RSSManagerUtil.cleanupResources(null, stmt, conn);
                 }
@@ -216,7 +217,7 @@ public class MySQLSystemRSSManager extends SystemRSSManager {
             if (isInTx.get()) {
                 getEntityManager().endJPATransaction();
             }
-            for (RSSInstance rssInstance: rssInstances) {
+            for (RSSInstance rssInstance : rssInstances) {
                 this.flushPrivileges(rssInstance);
             }
         } catch (Exception e) {
@@ -234,8 +235,8 @@ public class MySQLSystemRSSManager extends SystemRSSManager {
                 handleException(e.getMessage(), e);
             }
             String msg = "Error occurred while creating the database " + "user '" + qualifiedUsername;
-            
-            if(!mapUserwithInstance.isEmpty()){
+
+            if (!mapUserwithInstance.isEmpty()) {
                 dropAddedUsers(mapUserwithInstance);
             }
             handleException(msg, e);
@@ -252,32 +253,32 @@ public class MySQLSystemRSSManager extends SystemRSSManager {
         }
         return user;
     }
-    
-    private void dropAddedUsers(Map<String,String> mapUserwithInstance){
-    	Set<Entry<String, String>> entries = mapUserwithInstance.entrySet();
-    	for(Entry<String, String> entry : entries){
-    		String userName = entry.getValue();
-    		String instanceName = entry.getKey();
-    		Connection conn = null;
-    		PreparedStatement stmt = null;
-    		try{
-    			conn = getConnection(instanceName);
+
+    private void dropAddedUsers(Map<String, String> mapUserwithInstance) {
+        Set<Entry<String, String>> entries = mapUserwithInstance.entrySet();
+        for (Entry<String, String> entry : entries) {
+            String userName = entry.getValue();
+            String instanceName = entry.getKey();
+            Connection conn = null;
+            PreparedStatement stmt = null;
+            try {
+                conn = getConnection(instanceName);
                 conn.setAutoCommit(false);
 
                 String sql = "DELETE FROM mysql.user WHERE User = ? AND Host = ?";
                 stmt = conn.prepareStatement(sql);
                 stmt.setString(1, userName);
                 stmt.setString(2, "%");
-                
+
                 stmt.execute();
                 conn.commit();
-    		}catch(Exception ex){
-    			log.error(ex);
-    		} finally {
+            } catch (Exception ex) {
+                log.error(ex);
+            } finally {
                 RSSManagerUtil.cleanupResources(null, stmt, conn);
             }
-            
-    	}
+
+        }
     }
 
     public void removeDatabaseUser(String type,
@@ -287,7 +288,7 @@ public class MySQLSystemRSSManager extends SystemRSSManager {
         AtomicBoolean isInTx = new AtomicBoolean(false);
         try {
             super.removeDatabaseUser(isInTx, username, RSSManagerConstants.RSSManagerTypes.RM_TYPE_SYSTEM);
-            for (RSSInstance rssInstance: getEnvironmentManagementDAO().getRSSInstanceDAO().getSystemRSSInstances(MultitenantConstants.SUPER_TENANT_ID)) {
+            for (RSSInstance rssInstance : getEnvironmentManagementDAO().getRSSInstanceDAO().getSystemRSSInstances(MultitenantConstants.SUPER_TENANT_ID)) {
                 try {
 
                     conn = getConnection(rssInstance.getName());
@@ -311,7 +312,7 @@ public class MySQLSystemRSSManager extends SystemRSSManager {
             if (isInTx.get()) {
                 getEntityManager().endJPATransaction();
             }
-            for (RSSInstance rssInstance: getEnvironmentManagementDAO().getRSSInstanceDAO().getSystemRSSInstances(MultitenantConstants.SUPER_TENANT_ID)) {
+            for (RSSInstance rssInstance : getEnvironmentManagementDAO().getRSSInstanceDAO().getSystemRSSInstances(MultitenantConstants.SUPER_TENANT_ID)) {
                 this.flushPrivileges(rssInstance);
             }
         } catch (Exception e) {
@@ -359,7 +360,7 @@ public class MySQLSystemRSSManager extends SystemRSSManager {
             user.setRssInstanceName(rssInstance.getName());
             con = getConnection(rssInstanceName);
             con.setAutoCommit(false);
-            super.updateDatabaseUserPrivileges(isInTx,rssInstanceName,databaseName,privileges,user.getUsername(),RSSManagerConstants.RSSManagerTypes.RM_TYPE_SYSTEM);
+            super.updateDatabaseUserPrivileges(isInTx, rssInstanceName, databaseName, privileges, user.getUsername(), RSSManagerConstants.RSSManagerTypes.RM_TYPE_SYSTEM);
             update = updateUserPriviledgesPreparedStatement(con, databaseName, user.getUsername(), privileges);
             if (isInTx.get()) {
                 getEntityManager().endJPATransaction();
@@ -393,20 +394,20 @@ public class MySQLSystemRSSManager extends SystemRSSManager {
         RSSManagerUtil.validateDatabaseUserInfo(databaseUser);
         String qualifiedUsername = databaseUser.getUsername().trim();
             /* Validating user information to avoid any possible SQL injection attacks */
-        try{
+        try {
             //======================native call start
-            super.updateDatabaseUser(isInTx,databaseUser,RSSManagerConstants.RSSManagerTypes.RM_TYPE_SYSTEM);
-            RSSInstance[] instances=getEnvironmentManagementDAO().getRSSInstanceDAO().getSystemRSSInstances(MultitenantConstants.SUPER_TENANT_ID);
+            super.updateDatabaseUser(isInTx, databaseUser, RSSManagerConstants.RSSManagerTypes.RM_TYPE_SYSTEM);
+            RSSInstance[] instances = getEnvironmentManagementDAO().getRSSInstanceDAO().getSystemRSSInstances(MultitenantConstants.SUPER_TENANT_ID);
             checkConnections(instances);
             /* Committing distributed transaction */
             if (isInTx.get()) {
                 getEntityManager().endJPATransaction();
             }
-            for (RSSInstance rssInstance: instances) {
+            for (RSSInstance rssInstance : instances) {
                 try {
                     conn = getConnection(rssInstance.getName());
                     conn.setAutoCommit(false);
-                    String sql = updateDatabaseUserQuery(qualifiedUsername,databaseUser.getPassword());
+                    String sql = updateDatabaseUserQuery(qualifiedUsername, databaseUser.getPassword());
                     stmt = conn.prepareStatement(sql);
                     /* Actual database creation is committed just before committing the meta info into RSS
                   * management repository. This is done as it is not possible to control CREATE, DROP,
@@ -418,7 +419,7 @@ public class MySQLSystemRSSManager extends SystemRSSManager {
                     RSSManagerUtil.cleanupResources(null, stmt, conn);
                 }
             }
-            for (RSSInstance rssInstance: instances) {
+            for (RSSInstance rssInstance : instances) {
                 this.flushPrivileges(rssInstance);
             }
         } catch (Exception e) {
@@ -460,7 +461,7 @@ public class MySQLSystemRSSManager extends SystemRSSManager {
                 String msg = "Error occurred while connecting to the mysql instance";
                 handleException(msg, e);
             } finally {
-                if(connection!=null) {
+                if (connection != null) {
                     try {
                         connection.close();
                     } catch (SQLException e) {
@@ -471,8 +472,8 @@ public class MySQLSystemRSSManager extends SystemRSSManager {
         }
     }
 
-    private String updateDatabaseUserQuery(String qualifiedUsername,String password){
-        String query="UPDATE mysql.user SET Password=PASSWORD('"+password+"') WHERE User='"+qualifiedUsername+"' AND Host='%'";
+    private String updateDatabaseUserQuery(String qualifiedUsername, String password) {
+        String query = "UPDATE mysql.user SET Password=PASSWORD('" + password + "') WHERE User='" + qualifiedUsername + "' AND Host='%'";
         return query;
     }
 
@@ -608,8 +609,8 @@ public class MySQLSystemRSSManager extends SystemRSSManager {
     }
 
     private PreparedStatement updateUserPriviledgesPreparedStatement(Connection con, String databaseName,
-                                                       String username,
-                                                       DatabasePrivilegeSet privileges) throws SQLException {
+                                                                     String username,
+                                                                     DatabasePrivilegeSet privileges) throws SQLException {
         if (!(privileges instanceof MySQLPrivilegeSet)) {
             throw new RuntimeException("Invalid privilege set specified");
         }
@@ -645,17 +646,18 @@ public class MySQLSystemRSSManager extends SystemRSSManager {
         stmt.setString(22, username);
         return stmt;
     }
+
     @Override
     public boolean isDatabaseExist(String rssInstanceName, String databaseName) throws RSSManagerException {
-        boolean isExist=false;
+        boolean isExist = false;
         try {
-            isExist = super.isDatabaseExist(rssInstanceName,databaseName,RSSManagerConstants.RSSManagerTypes.RM_TYPE_SYSTEM);
-        }catch(Exception ex){
+            isExist = super.isDatabaseExist(rssInstanceName, databaseName, RSSManagerConstants.RSSManagerTypes.RM_TYPE_SYSTEM);
+        } catch (Exception ex) {
             if (ex instanceof EntityAlreadyExistsException) {
                 handleException(ex.getMessage(), ex);
             }
             String msg = "Error while check whether database '" + databaseName +
-                    "' on RSS instance : " +rssInstanceName+ "exists"+ ex.getMessage();
+                    "' on RSS instance : " + rssInstanceName + "exists" + ex.getMessage();
             handleException(msg, ex);
         }
         return isExist;
@@ -663,15 +665,15 @@ public class MySQLSystemRSSManager extends SystemRSSManager {
 
     @Override
     public boolean isDatabaseUserExist(String rssInstanceName, String username) throws RSSManagerException {
-        boolean isExist=false;
+        boolean isExist = false;
         try {
-            isExist = super.isDatabaseUserExist(rssInstanceName,username,RSSManagerConstants.RSSManagerTypes.RM_TYPE_SYSTEM);
-        }catch(Exception ex){
+            isExist = super.isDatabaseUserExist(rssInstanceName, username, RSSManagerConstants.RSSManagerTypes.RM_TYPE_SYSTEM);
+        } catch (Exception ex) {
             if (ex instanceof EntityAlreadyExistsException) {
                 handleException(ex.getMessage(), ex);
             }
             String msg = "Error while check whether user '" + username +
-                    "' on RSS instance : " +rssInstanceName+ "exists"+ ex.getMessage();
+                    "' on RSS instance : " + rssInstanceName + "exists" + ex.getMessage();
             handleException(msg, ex);
         }
         return isExist;
@@ -688,5 +690,60 @@ public class MySQLSystemRSSManager extends SystemRSSManager {
         } finally {
             RSSManagerUtil.cleanupResources(null, stmt, conn);
         }
+    }
+
+    @Override
+    public Database editDatabase(Database database) throws RSSManagerException {
+        Connection conn = null;
+        AtomicBoolean isInTx = new AtomicBoolean(false);
+        PreparedStatement stmt = null;
+
+        final String qualifiedDatabaseName =database.getName();
+        RSSInstance rssInstance = null;
+        try {
+            rssInstance = super.getNextAllocationNode();
+            if (rssInstance == null) {
+                String msg = "RSS instance " + database.getRssInstanceName() + " does not exist";
+                log.error(msg);
+                throw new EntityNotFoundException(msg);
+            }
+
+            /* Validating database name to avoid any possible SQL injection attack */
+            RSSManagerUtil.checkIfParameterSecured(qualifiedDatabaseName);
+            super.updateDatabse(isInTx, database, rssInstance, qualifiedDatabaseName);
+            conn = this.getConnection(rssInstance.getName());
+            conn.setAutoCommit(false);
+//            String sql =
+//            stmt = conn.prepareStatement(sql);
+
+//            stmt.execute();
+            if (isInTx.get()) {
+                getEntityManager().endJPATransaction();
+            }
+            conn.commit();
+        } catch (Exception e) {
+            if (isInTx.get()) {
+
+                    this.getEntityManager().rollbackJPATransaction();
+
+            }
+            try {
+                conn.rollback();
+            } catch (Exception e1) {
+                log.error(e1);
+            }
+            String msg = "Error while updating the database '" + qualifiedDatabaseName +
+                    "' on RSS instance '" + rssInstance.getName() + "' : " + e.getMessage();
+
+                handleException(msg, e);
+
+        } finally {
+            RSSManagerUtil.cleanupResources(null, stmt, conn);
+            closeJPASession();
+        }
+        return database;
+
+
+
     }
 }

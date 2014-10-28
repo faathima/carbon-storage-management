@@ -27,9 +27,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * Created by msffayaza on 10/18/14.
- */
 
 public class TenantWorkflowConfigHolder implements Serializable {
 
@@ -38,8 +35,6 @@ public class TenantWorkflowConfigHolder implements Serializable {
     private static final QName PROP_Q = new QName("Property");
 
     private static final QName ATT_NAME = new QName("name");
-
-    private transient SecretResolver secretResolver;
 
     private String tenantDomain;
 
@@ -57,9 +52,7 @@ public class TenantWorkflowConfigHolder implements Serializable {
     }
 
     public void load() throws WorkflowException{
-
         workflowExecutorMap = new ConcurrentHashMap<String, WorkflowExecutor>();
-
 
         try {
 
@@ -68,8 +61,6 @@ public class TenantWorkflowConfigHolder implements Serializable {
                     RSSManagerConstants.WORKFLOW_CONFIG_XML_NAME;
 
             StAXOMBuilder builder = new StAXOMBuilder(workflowConfigXMLPath);
-
-            secretResolver = SecretResolverFactory.create(builder.getDocumentElement(), true);
 
             OMElement workflowExtensionsElem = builder.getDocument().getFirstChildWithName(
                     new QName(WorkflowConstants.WORKFLOW_EXTENSIONS));
@@ -85,13 +76,7 @@ public class TenantWorkflowConfigHolder implements Serializable {
 
         }}
 
-
-
-
     private void loadProperties(OMElement executorElem, Object workflowClass) throws WorkflowException {
-
-        String securevaultKey = WorkflowConstants.SS + "." + WorkflowConstants.WORKFLOW_EXTENSIONS + "." +
-                executorElem.getLocalName() + "." + WorkflowConstants.PASSWORD;
 
         for (Iterator it = executorElem.getChildrenWithName(PROP_Q); it.hasNext(); ) {
             OMElement propertyElem = (OMElement) it.next();
@@ -105,16 +90,7 @@ public class TenantWorkflowConfigHolder implements Serializable {
                     setInstanceProperty(propName, omElt, workflowClass);
                 } else if (propertyElem.getText() != null) {
                     String value;
-                    if (WorkflowConstants.PASSWORD_.equals(propName)) {
-                        if (secretResolver.isInitialized() && secretResolver.isTokenProtected(securevaultKey)) {
-                            value = secretResolver.resolve(securevaultKey);
-                        } else {
-                            value = propertyElem.getText();
-                        }
-                    } else {
                         value = propertyElem.getText();
-                    }
-
                     setInstanceProperty(propName, value, workflowClass);
                 } else {
 

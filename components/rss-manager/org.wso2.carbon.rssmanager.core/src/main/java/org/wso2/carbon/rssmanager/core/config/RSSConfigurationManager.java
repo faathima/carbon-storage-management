@@ -31,6 +31,8 @@ import org.wso2.carbon.rssmanager.core.jpa.persistence.internal.PersistenceManag
 import org.wso2.carbon.rssmanager.core.manager.adaptor.EnvironmentAdaptor;
 import org.wso2.carbon.rssmanager.core.util.RSSDbCreator;
 import org.wso2.carbon.rssmanager.core.util.RSSManagerUtil;
+import org.wso2.carbon.rssmanager.core.workflow.WorkflowExecutor;
+import org.wso2.carbon.rssmanager.core.workflow.WorkflowExecutorFactory;
 import org.wso2.carbon.utils.CarbonUtils;
 
 import javax.sql.DataSource;
@@ -105,6 +107,9 @@ public class RSSConfigurationManager {
 			                                    this.getRSSConfig().getRSSManagementRepository());
 
 			this.adaptor = new EnvironmentAdaptor(environmentManager);
+
+
+
 
 		} catch (Exception e) {
 			throw new RSSManagerException("Error occurred while initializing RSS config", e);

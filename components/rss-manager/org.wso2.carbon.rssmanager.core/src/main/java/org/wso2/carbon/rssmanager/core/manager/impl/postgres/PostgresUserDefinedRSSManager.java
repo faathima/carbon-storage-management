@@ -756,4 +756,59 @@ public class PostgresUserDefinedRSSManager extends UserDefinedRSSManager {
     public DatabaseUser editDatabaseUser(String environmentName, DatabaseUser databaseUser) {
         return null;
     }
+
+    @Override
+    public Database editDatabase(Database database) throws RSSManagerException{
+        Connection conn = null;
+        AtomicBoolean isInTx = new AtomicBoolean(false);
+        PreparedStatement stmt = null;
+
+        final String qualifiedDatabaseName =database.getName();
+        RSSInstance rssInstance = null;
+        try {
+            rssInstance = super.getNextAllocationNode();
+            if (rssInstance == null) {
+                String msg = "RSS instance " + database.getRssInstanceName() + " does not exist";
+                log.error(msg);
+                throw new EntityNotFoundException(msg);
+            }
+
+            /* Validating database name to avoid any possible SQL injection attack */
+            RSSManagerUtil.checkIfParameterSecured(qualifiedDatabaseName);
+            super.updateDatabse(isInTx, database, rssInstance, qualifiedDatabaseName);
+            conn = this.getConnection(rssInstance.getName());
+            conn.setAutoCommit(false);
+//            String sql =
+//            stmt = conn.prepareStatement(sql);
+
+//            stmt.execute();
+            if (isInTx.get()) {
+                getEntityManager().endJPATransaction();
+            }
+            conn.commit();
+        } catch (Exception e) {
+            if (isInTx.get()) {
+
+                this.getEntityManager().rollbackJPATransaction();
+
+            }
+            try {
+                conn.rollback();
+            } catch (Exception e1) {
+                log.error(e1);
+            }
+            String msg = "Error while editing the database '" + qualifiedDatabaseName +
+                    "' on RSS instance '" + rssInstance.getName() + "' : " + e.getMessage();
+
+            handleException(msg, e);
+
+        } finally {
+            RSSManagerUtil.cleanupResources(null, stmt, conn);
+            closeJPASession();
+        }
+        return database;
+
+
+
+    }
 }

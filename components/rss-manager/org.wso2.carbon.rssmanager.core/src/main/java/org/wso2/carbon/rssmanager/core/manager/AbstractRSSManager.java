@@ -358,6 +358,18 @@ public abstract class AbstractRSSManager{
 
     }
 
+    protected void updateDatabse(AtomicBoolean isInTx, Database database, RSSInstance rssInstance,
+                                 String qualifiedDatabaseName) throws RSSManagerException, RSSDAOException {
+        RSSManagerUtil.checkIfParameterSecured(qualifiedDatabaseName);
+        final int tenantId = RSSManagerUtil.getTenantId();
+
+        boolean inTx = getEntityManager().beginTransaction();
+        isInTx.set(inTx);
+        joinTransaction();
+
+        this.getRSSDAO().getDatabaseDAO().merge(database);
+
+    }
     /**
      * Update user database privileges
      * @param isInTx Atomic boolean value for the distributed transaction

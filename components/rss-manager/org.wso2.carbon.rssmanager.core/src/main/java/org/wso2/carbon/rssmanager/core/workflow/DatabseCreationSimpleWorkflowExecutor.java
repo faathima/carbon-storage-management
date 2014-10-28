@@ -21,22 +21,16 @@ import java.util.List;
 import java.util.Set;
 
 
-/**
- * Created by msffayaza on 10/18/14.
- */
+
 public class DatabseCreationSimpleWorkflowExecutor  extends WorkflowExecutor {
 
     private static final Log log =
             LogFactory.getLog(DatabseCreationSimpleWorkflowExecutor.class);
 
-
-
     @Override
     public String getWorkflowType() {
         return WorkflowConstants.WF_TYPE_SS_DATABASE_CREATION;
     }
-
-
 
     public void execute(Workflow workflow, Database database) throws WorkflowException {
         if (log.isDebugEnabled()) {
@@ -51,9 +45,6 @@ public class DatabseCreationSimpleWorkflowExecutor  extends WorkflowExecutor {
 
     public void complete(Workflow workflow, Database database) throws WorkflowException {
         super.complete(workflow,database);
-
-
-
     }
 
     @Override
