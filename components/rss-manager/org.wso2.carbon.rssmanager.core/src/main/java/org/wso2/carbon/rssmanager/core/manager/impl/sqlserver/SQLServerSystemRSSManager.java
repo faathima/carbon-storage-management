@@ -701,10 +701,6 @@ public class SQLServerSystemRSSManager extends SystemRSSManager {
             super.updateDatabse(isInTx, database, rssInstance, qualifiedDatabaseName);
             conn = this.getConnection(rssInstance.getName());
             conn.setAutoCommit(false);
-//            String sql =
-//            stmt = conn.prepareStatement(sql);
-
-//            stmt.execute();
             if (isInTx.get()) {
                 getEntityManager().endJPATransaction();
             }
@@ -720,9 +716,8 @@ public class SQLServerSystemRSSManager extends SystemRSSManager {
             } catch (Exception e1) {
                 log.error(e1);
             }
-            String msg = "Error while creating the database '" + qualifiedDatabaseName +
+            String msg = "Error while updating the database status '" + qualifiedDatabaseName +
                     "' on RSS instance '" + rssInstance.getName() + "' : " + e.getMessage();
-
             handleException(msg, e);
 
         } finally {
@@ -730,7 +725,5 @@ public class SQLServerSystemRSSManager extends SystemRSSManager {
             closeJPASession();
         }
         return database;
-
-
     }
 }

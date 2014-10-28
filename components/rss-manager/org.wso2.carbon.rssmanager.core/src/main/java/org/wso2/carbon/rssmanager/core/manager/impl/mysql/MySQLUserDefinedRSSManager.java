@@ -681,7 +681,7 @@ public class MySQLUserDefinedRSSManager extends UserDefinedRSSManager {
             } catch (Exception e1) {
                 log.error(e1);
             }
-            String msg = "Error while creating the database '" + qualifiedDatabaseName +
+            String msg = "Error while updating the database status '" + qualifiedDatabaseName +
                     "' on RSS instance '" + rssInstance.getName() + "' : " + e.getMessage();
             handleException(msg, e);
         } finally {

@@ -713,28 +713,22 @@ public class MySQLSystemRSSManager extends SystemRSSManager {
             super.updateDatabse(isInTx, database, rssInstance, qualifiedDatabaseName);
             conn = this.getConnection(rssInstance.getName());
             conn.setAutoCommit(false);
-//            String sql =
-//            stmt = conn.prepareStatement(sql);
 
-//            stmt.execute();
             if (isInTx.get()) {
                 getEntityManager().endJPATransaction();
             }
             conn.commit();
         } catch (Exception e) {
             if (isInTx.get()) {
-
                     this.getEntityManager().rollbackJPATransaction();
-
             }
             try {
                 conn.rollback();
             } catch (Exception e1) {
                 log.error(e1);
             }
-            String msg = "Error while updating the database '" + qualifiedDatabaseName +
+            String msg = "Error while updating the database status '" + qualifiedDatabaseName +
                     "' on RSS instance '" + rssInstance.getName() + "' : " + e.getMessage();
-
                 handleException(msg, e);
 
         } finally {
@@ -742,8 +736,5 @@ public class MySQLSystemRSSManager extends SystemRSSManager {
             closeJPASession();
         }
         return database;
-
-
-
     }
 }
