@@ -36,15 +36,9 @@ public class TenantWorkflowConfigHolder implements Serializable {
 
     private static final QName ATT_NAME = new QName("name");
 
-    private String tenantDomain;
-
-    private int tenantId;
-
     private Map<String, WorkflowExecutor> workflowExecutorMap;
 
-    public TenantWorkflowConfigHolder(String tenantDomain,int tenantId){
-        this.tenantDomain = tenantDomain;
-        this.tenantId = tenantId;
+    public TenantWorkflowConfigHolder(){
     }
 
     public WorkflowExecutor getWorkflowExecutor(String workflowExecutorType){
@@ -55,7 +49,6 @@ public class TenantWorkflowConfigHolder implements Serializable {
         workflowExecutorMap = new ConcurrentHashMap<String, WorkflowExecutor>();
 
         try {
-
             String workflowConfigXMLPath = CarbonUtils.getCarbonConfigDirPath() +
                     File.separator + "etc" + File.separator +
                     RSSManagerConstants.WORKFLOW_CONFIG_XML_NAME;
@@ -89,8 +82,7 @@ public class TenantWorkflowConfigHolder implements Serializable {
                 if (omElt != null) {
                     setInstanceProperty(propName, omElt, workflowClass);
                 } else if (propertyElem.getText() != null) {
-                    String value;
-                        value = propertyElem.getText();
+                    String value = propertyElem.getText();
                     setInstanceProperty(propName, value, workflowClass);
                 } else {
 
@@ -100,7 +92,6 @@ public class TenantWorkflowConfigHolder implements Serializable {
             }
         }
     }
-
 
     public void setInstanceProperty(String name, Object val, Object obj) throws WorkflowException {
 
