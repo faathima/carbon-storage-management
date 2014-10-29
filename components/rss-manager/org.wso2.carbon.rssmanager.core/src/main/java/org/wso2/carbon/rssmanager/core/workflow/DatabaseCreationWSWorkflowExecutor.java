@@ -102,13 +102,11 @@ public class DatabaseCreationWSWorkflowExecutor extends WorkflowExecutor {
         }
     @Override
     public void complete(Workflow workflow, Database database) throws WorkflowException {
-        String approved="APPROVED";
         super.complete(workflow,database);
     }
 
     @Override
     public List<Workflow> getWorkflowDetails(String workflowStatus) throws WorkflowException {
-        // TODO Auto-generated method stub
         return null;
     }
 
